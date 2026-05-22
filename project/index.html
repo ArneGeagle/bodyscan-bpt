@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bodyscan platform — 3 directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: #F4F1EB; font-family: "Inter", system-ui, sans-serif; color: #2A2A28; overflow: hidden; }
+  iframe.frame { width: 100%; height: 100%; border: 0; background: #fff; display: block; }
+
+  .readme { width: 100%; height: 100%; padding: 40px 44px; background: #FBF7EF; display: flex; flex-direction: column; gap: 18px; box-sizing: border-box; overflow: auto; }
+  .readme h1 { font-family: "Instrument Serif", serif; font-size: 44px; font-weight: 400; letter-spacing: -0.01em; line-height: 1.05; margin: 0; }
+  .readme h1 em { color: #5C7A4F; font-style: italic; }
+  .readme .lede { color: #5C544A; margin: 0; font-size: 16px; line-height: 1.55; max-width: 52ch; }
+  .readme .meta { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+  .readme .meta-row { display: flex; align-items: baseline; gap: 12px; font-size: 14px; }
+  .readme .meta-row b { width: 80px; color: #9A8E78; font-family: "JetBrains Mono", monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; flex-shrink: 0; }
+  .readme .meta-row span { color: #2A2A28; }
+  .readme .accounts { background: #fff; border: 1px solid #E8DFCB; border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .readme .accounts h2 { font-family: "Instrument Serif", serif; font-size: 20px; font-weight: 400; margin: 0; }
+  .readme .acct { display: flex; gap: 12px; align-items: center; }
+  .readme .acct .dot { width: 36px; height: 36px; border-radius: 50%; background: #DCE5D5; color: #3F5237; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+  .readme .acct .dot.coach { background: #EADFCB; color: #5A4630; }
+  .readme .acct .who { font-weight: 600; font-size: 14px; }
+  .readme .acct .creds { color: #9A8E78; font-family: "JetBrains Mono", monospace; font-size: 12px; }
+  .readme .tips { color: #5C544A; font-size: 13px; line-height: 1.6; }
+  .readme .tips ul { margin: 4px 0 0; padding-left: 18px; }
+  .readme .tips li { margin-bottom: 2px; }
+  .readme .footer { margin-top: auto; padding-top: 16px; border-top: 1px solid #E8DFCB; font-family: "JetBrains Mono", monospace; font-size: 11px; color: #9A8E78; }
+
+  /* Theme variants — applied via body class */
+  body.theme-cream { background: #F4F1EB; }
+  body.theme-mint  { background: #E4EEEA; }
+  body.theme-paper { background: #FAFAF7; }
+  body.theme-slate { background: #1E2A28; color: #E4EEEA; }
+  body.theme-slate .design-canvas { background: #1E2A28 !important; }
+
+  body.no-labels [data-dc-section] > div:first-child { display: none !important; }
+</style>
+</head>
+<body class="theme-cream">
+<div id="root"></div>
+
+<template id="readme-tpl">
+  <div class="readme">
+    <h1>You picked <em>V3 · kelp.</em></h1>
+    <p class="lede">This is the friendlier take — tooltips on every metric, plain-language insights, quick actions, a Today panel for coaches, and a glossary modal. Open the big artboard next to this one to try it.</p>
+
+    <div class="accounts">
+      <h2>Demo accounts</h2>
+      <div class="acct">
+        <div class="dot">EL</div>
+        <div>
+          <div class="who">Emma Larsen · Client</div>
+          <div class="creds">emma@hey.com · any password</div>
+        </div>
+      </div>
+      <div class="acct">
+        <div class="dot coach">MB</div>
+        <div>
+          <div class="who">Marcus Bell · Head coach</div>
+          <div class="creds">marcus@studio.fit · any password</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="meta">
+      <div class="meta-row"><b>Client</b><span>Overview · Progress · Compare scans · Goals</span></div>
+      <div class="meta-row"><b>Coach</b><span>Today · Roster · Add scan · Client detail with notes</span></div>
+      <div class="meta-row"><b>Metrics</b><span>Weight · Body fat · Muscle · Visceral · Water · Metabolic age</span></div>
+      <div class="meta-row"><b>Multi-coach</b><span>Marcus is Emma's head coach. Sofia (nutrition) & Tom (mobility) were invited by him.</span></div>
+    </div>
+
+    <div class="tips">
+      <b>Try this:</b>
+      <ul>
+        <li>Hover the <b>?</b> next to any metric for a plain-English explanation</li>
+        <li>Click "What do these mean?" in the sidebar for the full glossary</li>
+        <li>On Compare, try the "Quick picks" preset chips</li>
+        <li>Coach Today shows overdue / upcoming / recent at a glance</li>
+        <li>Use the <b>Tweaks</b> panel (bottom-right) to filter sections, swap themes</li>
+      </ul>
+    </div>
+
+    <div class="footer">v0.2 · May 2026 · for review</div>
+  </div>
+</template>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+  const { useState, useEffect } = React;
+
+  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+    "theme": "mint",
+    "showFriendly": true,
+    "showOriginals": false,
+    "showMobile": true,
+    "hideLabels": true,
+    "mobileWidth": 420,
+    "desktopWidth": 1280,
+    "artboardHeight": 880
+  }/*EDITMODE-END*/;
+
+  const Frame = ({ src }) => (
+    <iframe src={src} className="frame" allow="clipboard-read; clipboard-write" />
+  );
+  const Readme = () => (
+    <div className="readme" dangerouslySetInnerHTML={{ __html: document.getElementById("readme-tpl").innerHTML }} />
+  );
+
+  function App() {
+    const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+    // Apply theme + label visibility classes to body
+    useEffect(() => {
+      const body = document.body;
+      body.className = body.className.replace(/theme-\w+/g, "").trim();
+      body.classList.add("theme-" + t.theme);
+      body.classList.toggle("no-labels", t.hideLabels);
+    }, [t.theme, t.hideLabels]);
+
+    const dw = t.desktopWidth;
+    const dh = t.artboardHeight;
+    const mw = t.mobileWidth;
+    const mh = Math.round(dh * 0.91);
+
+    // Force canvas to remount when the artboard dimensions change so the
+    // grid reflows around the new sizes.
+    const canvasKey = `${dw}x${dh}-${mw}x${mh}-${t.showFriendly}-${t.showOriginals}-${t.showMobile}`;
+
+    return (
+      <>
+        <DesignCanvas key={canvasKey}>
+          {t.showFriendly && (
+            <DCSection id="friendly" title="V3 · kelp — friendlier" subtitle="Tooltips, insights, quick actions, Today panel, glossary modal.">
+              <DCArtboard id="readme" label="Read me first" width={520} height={dh}>
+                <Readme />
+              </DCArtboard>
+              <DCArtboard id="v3f" label="V3 · friendly (recommended)" width={dw} height={dh}>
+                <Frame src="v3-mint-friendly.html" />
+              </DCArtboard>
+              {t.showMobile && (
+                <DCArtboard id="v3f-m" label="V3 · friendly · mobile" width={mw} height={mh}>
+                  <Frame src="v3-mint-friendly.html" />
+                </DCArtboard>
+              )}
+            </DCSection>
+          )}
+
+          {t.showOriginals && (
+            <DCSection id="prototypes" title="All three directions (for comparison)" subtitle="The original three explorations — kept here so you can compare against the friendlier V3.">
+              <DCArtboard id="v1" label="V1 · rooted (Soft Sage)" width={dw} height={dh}>
+                <Frame src="v1-soft-sage.html" />
+              </DCArtboard>
+              <DCArtboard id="v2" label="V2 · glow (Sunset)" width={dw} height={dh}>
+                <Frame src="v2-sunset-glow.html" />
+              </DCArtboard>
+              <DCArtboard id="v3" label="V3 · kelp (original)" width={dw} height={dh}>
+                <Frame src="v3-mint-fresh.html" />
+              </DCArtboard>
+            </DCSection>
+          )}
+
+          {t.showOriginals && t.showMobile && (
+            <DCSection id="mobile" title="Mobile view (originals)" subtitle="The other two apps at phone width.">
+              <DCArtboard id="v1-m" label="V1 · mobile" width={mw} height={mh}>
+                <Frame src="v1-soft-sage.html" />
+              </DCArtboard>
+              <DCArtboard id="v2-m" label="V2 · mobile" width={mw} height={mh}>
+                <Frame src="v2-sunset-glow.html" />
+              </DCArtboard>
+              <DCArtboard id="v3-m" label="V3 · mobile" width={mw} height={mh}>
+                <Frame src="v3-mint-fresh.html" />
+              </DCArtboard>
+            </DCSection>
+          )}
+
+          {!t.showFriendly && !t.showOriginals && (
+            <DCSection id="empty" title="Nothing to show" subtitle="Toggle a section on in the Tweaks panel.">
+              <DCArtboard id="empty-ab" label="—" width={520} height={300}>
+                <div style={{ padding: 40, display: "flex", alignItems: "center", justifyContent: "center", height: "100%", color: "#9A8E78", textAlign: "center", fontFamily: "Inter, system-ui" }}>
+                  Open the Tweaks panel and turn on at least one section to see prototypes.
+                </div>
+              </DCArtboard>
+            </DCSection>
+          )}
+        </DesignCanvas>
+
+        <TweaksPanel title="Tweaks">
+          <TweakSection label="Theme" />
+          <TweakRadio label="Background" value={t.theme}
+            options={[
+              { value: "cream", label: "Cream" },
+              { value: "mint",  label: "Mint" },
+              { value: "paper", label: "Paper" },
+              { value: "slate", label: "Slate" },
+            ]}
+            onChange={(v) => setTweak("theme", v)} />
+          <TweakToggle label="Hide section titles" value={t.hideLabels}
+            onChange={(v) => setTweak("hideLabels", v)} />
+
+          <TweakSection label="What to show" />
+          <TweakToggle label="Friendlier V3" value={t.showFriendly}
+            onChange={(v) => setTweak("showFriendly", v)} />
+          <TweakToggle label="Originals (V1 · V2 · V3)" value={t.showOriginals}
+            onChange={(v) => setTweak("showOriginals", v)} />
+          <TweakToggle label="Mobile views" value={t.showMobile}
+            onChange={(v) => setTweak("showMobile", v)} />
+
+          <TweakSection label="Artboard sizing" />
+          <TweakRadio label="Mobile width" value={t.mobileWidth}
+            options={[
+              { value: 375, label: "375" },
+              { value: 414, label: "414" },
+              { value: 430, label: "430" },
+            ]}
+            onChange={(v) => setTweak("mobileWidth", v)} />
+          <TweakRadio label="Desktop width" value={t.desktopWidth}
+            options={[
+              { value: 1024, label: "1024" },
+              { value: 1280, label: "1280" },
+              { value: 1440, label: "1440" },
+            ]}
+            onChange={(v) => setTweak("desktopWidth", v)} />
+          <TweakSlider label="Artboard height" value={t.artboardHeight}
+            min={600} max={1200} step={20} unit="px"
+            onChange={(v) => setTweak("artboardHeight", v)} />
+
+          <TweakSection label="Quick links" />
+          <TweakButton label="Open friendly V3 fullscreen"
+            onClick={() => window.open("v3-mint-friendly.html", "_blank")} />
+        </TweaksPanel>
+      </>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

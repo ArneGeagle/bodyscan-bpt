@@ -1,0 +1,1603 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>kelp · body composition platform</title>
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#0d9488" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #FBFCFA; --bg-2: #F0F5F2; --bg-3: #E4EEEA; --card: #FFFFFF;
+    --ink: #0E2A22; --ink-2: #4B665C; --ink-3: #7A9B8E;
+    --line: #D8E6E0; --line-2: #E4EEEA;
+    --mint: #3FA77F; --mint-deep: #1F6B4F; --mint-soft: #D8EFE4;
+    --sand: #E5944A; --sand-soft: #F0E1D2;
+    --good: #1F6B4F; --warn: #C26537;
+    --r-lg: 20px; --r-md: 14px; --r-sm: 10px;
+    --shadow: 0 1px 0 rgba(15,42,34,0.04), 0 12px 28px -18px rgba(15,42,34,0.12);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: "Manrope", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { min-height: 100vh; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  .mf-mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-feature-settings: "tnum" 1; font-variant-numeric: tabular-nums; }
+  .mf-h1 { font-size: clamp(28px, 3.6vw, 40px); font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; margin: 0; }
+  .mf-h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
+  .mf-h3 { font-size: 16px; font-weight: 700; letter-spacing: -0.005em; margin: 0 0 4px 0; }
+  .mf-h3 small { color: var(--ink-3); font-weight: 500; font-size: 13px; margin-left: 4px; }
+  .mf-sub { color: var(--ink-2); font-size: 14px; line-height: 1.5; margin: 4px 0 0 0; }
+  .mf-lede { color: var(--ink-2); font-size: 16px; line-height: 1.5; margin: 0; }
+  .mf-eyebrow { color: var(--ink-3); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .mf-logo { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; font-size: 22px; letter-spacing: -0.02em; }
+  .mf-logo-mark { width: 18px; height: 18px; border-radius: 5px; background: linear-gradient(135deg, var(--mint) 0%, var(--mint-deep) 100%); position: relative; }
+  .mf-logo-mark::after { content: ""; position: absolute; inset: 5px; background: var(--bg); border-radius: 2px; }
+  .mf-avatar { border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; letter-spacing: 0.02em; flex-shrink: 0; }
+  .mf-login { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 880px) {
+    .mf-login { grid-template-columns: 1fr; }
+    .mf-login-aside { padding: 24px 24px 28px; gap: 18px; }
+    .mf-pitch-list { display: none; }
+    .mf-login-stats { display: none; }
+    .mf-login-main { padding: 24px; }
+  }
+  .mf-login-aside { background: var(--mint-deep); color: var(--bg); padding: 48px clamp(28px, 5vw, 56px); display: flex; flex-direction: column; gap: 36px; position: relative; overflow: hidden; }
+  .mf-login-aside::before { content: ""; position: absolute; inset: -40% -20% auto auto; width: 80%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, rgba(63,167,127,0.4), transparent 70%); }
+  .mf-login-aside .mf-logo { color: var(--bg); }
+  .mf-login-aside .mf-logo-mark { background: var(--bg); }
+  .mf-login-aside .mf-logo-mark::after { background: var(--mint-deep); }
+  .mf-login-aside > * { position: relative; z-index: 1; }
+  .mf-login-pitch { display: flex; flex-direction: column; gap: 16px; margin-top: auto; }
+  .mf-login-aside .mf-h1 { color: var(--bg); font-size: clamp(32px, 4vw, 44px); }
+  .mf-login-aside .mf-lede { color: rgba(255,255,255,0.78); font-size: 16px; }
+  .mf-pitch-list { list-style: none; padding: 0; margin: 8px 0 0 0; display: flex; flex-direction: column; gap: 10px; }
+  .mf-pitch-list li { display: flex; align-items: flex-start; gap: 12px; color: rgba(255,255,255,0.9); font-size: 14px; }
+  .mf-tick { color: var(--mint-soft); font-weight: 800; }
+  .mf-login-stats { display: flex; gap: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); }
+  .mf-login-stats > div { display: flex; flex-direction: column; gap: 2px; }
+  .mf-login-stats b { font-size: 26px; color: var(--bg); font-weight: 700; letter-spacing: -0.02em; }
+  .mf-login-stats small { color: rgba(255,255,255,0.6); font-size: 12px; }
+  .mf-login-main { padding: 48px clamp(28px, 5vw, 56px); display: flex; align-items: center; justify-content: center; }
+  .mf-login-card { width: min(440px, 100%); display: flex; flex-direction: column; gap: 14px; }
+  .mf-persona-row { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+  .mf-persona { display: flex; align-items: center; gap: 14px; padding: 14px; background: var(--card); border: 1px solid var(--line); border-radius: var(--r-md); cursor: pointer; text-align: left; transition: all .15s ease; }
+  .mf-persona:hover { border-color: var(--mint); background: var(--bg); }
+  .mf-persona > div:nth-child(2) { flex: 1; }
+  .mf-persona-name { font-weight: 700; font-size: 15px; }
+  .mf-persona-role { color: var(--ink-3); font-size: 12px; font-family: "JetBrains Mono", monospace; }
+  .mf-kbd { padding: 2px 8px; border-radius: 6px; background: var(--bg-2); color: var(--ink-2); font-family: "JetBrains Mono", monospace; font-size: 12px; }
+  .mf-divider { display: flex; align-items: center; gap: 12px; color: var(--ink-3); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .mf-divider::before, .mf-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .mf-field { display: flex; flex-direction: column; gap: 6px; }
+  .mf-field > span { color: var(--ink-2); font-size: 13px; font-weight: 600; }
+  .mf-field input, .mf-field select, .mf-textarea { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 11px 13px; outline: none; transition: border-color .15s ease; font-size: 14px; }
+  .mf-field input:focus, .mf-field select:focus, .mf-textarea:focus { border-color: var(--mint); box-shadow: 0 0 0 3px rgba(63,167,127,0.15); }
+  .mf-textarea { width: 100%; font-family: inherit; resize: vertical; }
+  .mf-check { display: flex; align-items: center; gap: 8px; color: var(--ink-2); font-size: 13px; }
+  .mf-btn { padding: 11px 18px; border-radius: var(--r-sm); border: 1px solid transparent; cursor: pointer; font-weight: 600; font-size: 14px; transition: all .15s ease; display: inline-flex; align-items: center; gap: 6px; }
+  .mf-btn-primary { background: var(--mint-deep); color: var(--bg); }
+  .mf-btn-primary:hover { background: var(--mint); }
+  .mf-btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .mf-btn-ghost { background: var(--card); border-color: var(--line); color: var(--ink); }
+  .mf-btn-ghost:hover { background: var(--bg); border-color: var(--mint); }
+  .mf-full { width: 100%; }
+  .mf-back { background: none; border: 0; color: var(--ink-3); cursor: pointer; align-self: flex-start; padding: 0; font-size: 13px; margin-bottom: 8px; }
+  .mf-back:hover { color: var(--ink); }
+  .mf-shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+  @media (max-width: 880px) {
+    .mf-shell { grid-template-columns: 1fr; }
+    .mf-side { display: none; }
+    .mf-mobile-top { display: flex !important; }
+    .mf-mobile-nav { display: flex !important; }
+    .mf-content { padding-bottom: 90px !important; padding-top: 8px !important; }
+  }
+  .mf-mobile-top { display: none; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--card); border-bottom: 1px solid var(--line-2); position: sticky; top: 0; z-index: 20; }
+  .mf-mobile-top-user { display: flex; align-items: center; gap: 10px; }
+  .mf-mobile-top-name { font-weight: 700; font-size: 14px; }
+  .mf-mobile-top-role { color: var(--ink-3); font-size: 11px; font-family: "JetBrains Mono", monospace; }
+  .mf-mobile-top-actions { display: flex; gap: 4px; }
+  .mf-mobile-top-actions button { background: var(--bg-2); border: 0; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--ink-2); cursor: pointer; }
+  .mf-mobile-top-actions button:hover { background: var(--mint-soft); color: var(--mint-deep); }
+  .mf-mobile-nav { display: none; position: fixed; bottom: 12px; left: 12px; right: 12px; background: var(--card); border-radius: 100px; box-shadow: 0 12px 30px -8px rgba(15,42,34,0.18), 0 0 0 1px var(--line-2); padding: 6px; justify-content: space-around; z-index: 30; }
+  .mf-mobile-nav button { background: none; border: 0; padding: 10px 8px; border-radius: 100px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: var(--ink-3); font-weight: 600; min-width: 56px; transition: all .15s ease; }
+  .mf-mobile-nav button.is-on { background: var(--mint-deep); color: var(--bg); }
+  .mf-mobile-nav button .mf-icon { width: 18px; height: 18px; }
+  .mf-side { background: var(--card); border-right: 1px solid var(--line-2); padding: 24px 16px; display: flex; flex-direction: column; gap: 24px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .mf-side-logo { padding: 0 8px; display: flex; align-items: center; gap: 8px; }
+  .mf-side-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+  .mf-side-link { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 0; background: transparent; cursor: pointer; border-radius: var(--r-sm); color: var(--ink-2); font-size: 14px; font-weight: 500; text-align: left; transition: all .12s ease; width: 100%; }
+  .mf-side-link:hover { background: var(--bg-2); color: var(--ink); }
+  .mf-side-link.is-on { background: var(--mint-soft); color: var(--mint-deep); font-weight: 600; }
+  .mf-side-icon { width: 20px; text-align: center; display: flex; align-items: center; justify-content: center; }
+  .mf-side-badge { margin-left: auto; background: var(--bg-2); color: var(--ink-2); font-size: 11px; padding: 2px 6px; border-radius: 100px; font-family: "JetBrains Mono", monospace; }
+  .mf-side-link.is-on .mf-side-badge { background: var(--mint); color: var(--bg); }
+  .mf-side-user { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--bg-2); border-radius: var(--r-md); }
+  .mf-side-user-meta { flex: 1; min-width: 0; }
+  .mf-side-user-name { font-weight: 700; font-size: 13px; }
+  .mf-side-user-role { color: var(--ink-3); font-size: 11px; font-family: "JetBrains Mono", monospace; }
+  .mf-icon-btn { background: none; border: 0; padding: 6px; cursor: pointer; color: var(--ink-3); border-radius: 6px; font-size: 14px; line-height: 1; }
+  .mf-icon-btn:hover { color: var(--ink); background: var(--card); }
+  .mf-content { padding: clamp(24px, 3vw, 36px); max-width: 1280px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+  .mf-page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+  .mf-page-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .mf-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .mf-stat { background: var(--card); border: 1px solid var(--line-2); border-radius: var(--r-md); padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; box-shadow: var(--shadow); }
+  .mf-stat-label { color: var(--ink-2); font-size: 12px; font-weight: 600; letter-spacing: 0.02em; }
+  .mf-stat-val { font-size: 30px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+  .mf-stat-val small { font-size: 14px; color: var(--ink-3); margin-left: 2px; font-weight: 600; }
+  .mf-stat-delta { font-size: 12px; font-weight: 600; font-family: "JetBrains Mono", monospace; }
+  .mf-stat-delta span { color: var(--ink-3); font-weight: 500; }
+  .mf-stat-delta.is-good { color: var(--good); }
+  .mf-stat-delta.is-warn { color: var(--warn); }
+  .mf-row { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+  @media (max-width: 880px) { .mf-row { grid-template-columns: 1fr; } }
+  .mf-panel { background: var(--card); border: 1px solid var(--line-2); border-radius: var(--r-md); padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; }
+  .mf-no-padding { padding: 0; overflow: hidden; }
+  .mf-panel-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .mf-panel-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .mf-note { display: flex; gap: 12px; }
+  .mf-note > div:last-child { flex: 1; }
+  .mf-note-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .mf-note-body { margin: 0; color: var(--ink); font-size: 15px; line-height: 1.55; }
+  .mf-coachlist { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .mf-coachlist li { display: flex; align-items: center; gap: 10px; }
+  .mf-coach-meta { flex: 1; min-width: 0; }
+  .mf-coach-name { font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+  .mf-coach-role { color: var(--ink-3); font-size: 12px; font-family: "JetBrains Mono", monospace; }
+  .mf-tag { background: var(--ink); color: var(--bg); font-size: 10px; padding: 1px 6px; border-radius: 4px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+  .mf-tag-warn { background: var(--warn); }
+  .mf-table-wrap { overflow-x: auto; margin: 0 -20px; padding: 0 20px; }
+  .mf-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  @media (max-width: 540px) { .mf-table { min-width: 600px; } }
+  .mf-table th { text-align: left; padding: 10px 14px; background: var(--bg-2); font-weight: 600; color: var(--ink-2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .mf-table td { padding: 12px 14px; border-top: 1px solid var(--line-2); }
+  .mf-table tbody tr:hover { background: var(--bg); }
+  .mf-table th:first-child, .mf-table td:first-child { padding-left: 20px; }
+  .mf-table th:last-child, .mf-table td:last-child { padding-right: 20px; }
+  .mf-tabs { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--line-2); border-radius: var(--r-md); padding: 4px; align-self: flex-start; flex-wrap: wrap; }
+  .mf-tab { background: none; border: 0; padding: 8px 14px; border-radius: var(--r-sm); cursor: pointer; font-size: 13px; color: var(--ink-2); font-weight: 600; }
+  .mf-tab:hover { color: var(--ink); }
+  .mf-tab.is-on { background: var(--ink); color: var(--bg); }
+  .mf-chart-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+  .mf-bignum { font-size: 56px; line-height: 1; font-weight: 700; letter-spacing: -0.03em; }
+  .mf-bignum small { font-size: 18px; color: var(--ink-3); margin-left: 4px; font-weight: 600; }
+  .mf-bigdelta { font-size: 14px; font-family: "JetBrains Mono", monospace; margin-top: 4px; }
+  .mf-bigdelta .is-good { font-weight: 600; }
+  .mf-chart-range { display: flex; gap: 2px; background: var(--bg-2); padding: 3px; border-radius: var(--r-sm); }
+  .mf-chart-range button { background: none; border: 0; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; color: var(--ink-2); font-family: "JetBrains Mono", monospace; }
+  .mf-chart-range button.is-on { background: var(--card); color: var(--ink); font-weight: 600; }
+  .mf-compare-pickers { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+  .mf-compare-pickers .mf-field { flex: 1; min-width: 200px; }
+  .mf-vs { padding: 12px 4px; font-family: "JetBrains Mono", monospace; color: var(--ink-3); font-size: 13px; font-weight: 700; }
+  .mf-compare-table tbody td { font-size: 14px; }
+  .is-good { color: var(--good); }
+  .is-warn { color: var(--warn); }
+  .mf-goal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+  .mf-goal-card { flex-direction: row; align-items: center; gap: 18px; }
+  .mf-goal-meta { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .mf-goal-label { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .mf-goal-row { display: flex; justify-content: space-between; font-size: 13px; }
+  .mf-goal-row span:first-child { color: var(--ink-3); }
+  .mf-goal-bar { height: 6px; background: var(--bg-3); border-radius: 100px; overflow: hidden; margin-top: 8px; }
+  .mf-goal-bar-fill { height: 100%; background: linear-gradient(90deg, var(--mint), var(--mint-deep)); border-radius: 100px; }
+  .mf-ring { position: relative; flex-shrink: 0; }
+  .mf-ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+  .mf-ring-center span { font-size: 22px; font-weight: 700; color: var(--mint-deep); }
+  .mf-ring-center small { font-size: 12px; color: var(--ink-3); }
+  .mf-roster { display: grid; grid-template-columns: 280px 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 880px) { .mf-roster { grid-template-columns: 1fr; } }
+  .mf-roster-list { background: var(--card); border: 1px solid var(--line-2); border-radius: var(--r-md); padding: 12px; box-shadow: var(--shadow); position: sticky; top: 16px; }
+  .mf-roster-head { margin-bottom: 8px; position: relative; }
+  .mf-search { width: 100%; padding: 9px 12px 9px 32px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--bg); outline: none; font-size: 13px; }
+  .mf-search:focus { border-color: var(--mint); }
+  .mf-roster-list ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 2px; max-height: 60vh; overflow-y: auto; }
+  .mf-roster-item { display: flex; align-items: center; gap: 10px; padding: 9px; border-radius: var(--r-sm); cursor: pointer; transition: background .12s ease; }
+  .mf-roster-item:hover { background: var(--bg-2); }
+  .mf-roster-item.is-on { background: var(--mint-soft); }
+  .mf-roster-meta { flex: 1; min-width: 0; }
+  .mf-roster-name { font-weight: 600; font-size: 14px; }
+  .mf-roster-sub { color: var(--ink-3); font-size: 11px; }
+  .mf-roster-detail { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .mf-empty { padding: 60px 32px; text-align: center; background: var(--card); border: 1px solid var(--line-2); border-radius: var(--r-md); display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .mf-empty-emoji { font-size: 48px; line-height: 1; }
+  .mf-empty .mf-sub { max-width: 36ch; }
+  .mf-form-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; }
+  @media (max-width: 640px) { .mf-form-row { grid-template-columns: 1fr; } }
+  .mf-autofill { white-space: nowrap; }
+  .mf-metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .mf-msgs { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
+  .mf-msgs li { display: flex; gap: 12px; }
+  .mf-msgs li > div:last-child { flex: 1; }
+  .mf-msg-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .mf-msg-body { margin: 4px 0 0 0; font-size: 14px; color: var(--ink-2); }
+  .mf-toast { position: fixed; bottom: 24px; right: 24px; background: var(--ink); color: var(--bg); padding: 12px 18px; border-radius: var(--r-md); font-size: 14px; font-weight: 500; box-shadow: 0 16px 36px -8px rgba(0,0,0,0.25); animation: mfToast .25s ease; z-index: 50; }
+  @keyframes mfToast { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .mf-icon { width: 18px; height: 18px; flex-shrink: 0; }
+  .mf-highlights { background: linear-gradient(135deg, var(--mint-deep), #2D8260); color: var(--bg); border-radius: var(--r-md); padding: 24px; display: flex; flex-direction: column; gap: 16px; position: relative; overflow: hidden; }
+  .mf-highlights::before { content: ""; position: absolute; right: -40px; top: -40px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.12), transparent 70%); pointer-events: none; }
+  .mf-highlights-head { position: relative; }
+  .mf-highlights-head h2 { font-size: 18px; font-weight: 700; margin: 0 0 4px 0; letter-spacing: -0.01em; }
+  .mf-highlights-head p { margin: 0; color: rgba(255,255,255,0.78); font-size: 13px; }
+  .mf-highlights-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; position: relative; }
+  .mf-highlight { background: rgba(255,255,255,0.1); border-radius: var(--r-sm); padding: 14px; backdrop-filter: blur(4px); }
+  .mf-highlight-emoji { font-size: 22px; margin-bottom: 8px; line-height: 1; }
+  .mf-highlight-num { font-family: "JetBrains Mono", monospace; font-size: 22px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+  .mf-highlight-num small { font-size: 13px; opacity: 0.7; font-weight: 600; margin-left: 2px; }
+  .mf-highlight-body { font-size: 12px; color: rgba(255,255,255,0.85); margin-top: 4px; line-height: 1.4; }
+  .mf-quickactions { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+  .mf-qa { background: var(--card); border: 1px solid var(--line-2); border-radius: var(--r-md); padding: 14px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; text-align: left; transition: all .15s ease; color: var(--ink); }
+  .mf-qa:hover { border-color: var(--mint); transform: translateY(-1px); box-shadow: var(--shadow); }
+  .mf-qa-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--mint-soft); color: var(--mint-deep); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .mf-qa-meta { flex: 1; min-width: 0; }
+  .mf-qa-title { font-weight: 600; font-size: 14px; }
+  .mf-qa-sub { color: var(--ink-3); font-size: 12px; }
+  .mf-stat-head { display: flex; align-items: center; gap: 6px; }
+  .mf-help-dot { width: 16px; height: 16px; border-radius: 50%; background: var(--bg-2); color: var(--ink-3); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; cursor: help; position: relative; transition: all .12s ease; flex-shrink: 0; }
+  .mf-help-dot:hover { background: var(--mint-soft); color: var(--mint-deep); }
+  .mf-tip { position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 12px; border-radius: var(--r-sm); font-size: 12px; line-height: 1.4; font-weight: 500; width: 220px; pointer-events: none; opacity: 0; transition: opacity .15s ease; z-index: 20; box-shadow: 0 12px 24px -8px rgba(0,0,0,0.3); }
+  .mf-tip::after { content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: var(--ink); }
+  .mf-tip strong { color: var(--mint-soft); display: block; margin-bottom: 4px; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .mf-help-dot:hover .mf-tip { opacity: 1; }
+  .mf-stat-status { font-size: 11px; color: var(--ink-3); margin-top: 2px; font-weight: 500; }
+  .mf-stat-status.is-good { color: var(--good); }
+  .mf-stat-status.is-watch { color: var(--warn); }
+  .mf-insight { background: var(--mint-soft); border: 1px solid #C5E5D6; border-radius: var(--r-md); padding: 14px 18px; display: flex; align-items: flex-start; gap: 12px; }
+  .mf-insight-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--mint); color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .mf-insight-body { flex: 1; }
+  .mf-insight-title { font-weight: 700; font-size: 14px; color: var(--mint-deep); }
+  .mf-insight-text { font-size: 14px; color: var(--ink); margin-top: 2px; line-height: 1.5; }
+  .mf-compare-presets { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .mf-preset { background: var(--card); border: 1px solid var(--line); border-radius: 100px; padding: 6px 12px; cursor: pointer; font-size: 12px; color: var(--ink-2); font-weight: 600; font-family: "JetBrains Mono", monospace; }
+  .mf-preset:hover { border-color: var(--mint); color: var(--ink); }
+  .mf-preset.is-on { background: var(--mint-deep); color: var(--bg); border-color: var(--mint-deep); }
+  .mf-compare-summary { background: var(--card); border: 1px solid var(--line-2); border-radius: var(--r-md); padding: 18px 20px; display: flex; gap: 24px; flex-wrap: wrap; box-shadow: var(--shadow); }
+  .mf-summary-item { display: flex; flex-direction: column; gap: 2px; }
+  .mf-summary-num { font-family: "JetBrains Mono", monospace; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+  .mf-summary-num.is-good { color: var(--good); }
+  .mf-summary-num.is-warn { color: var(--warn); }
+  .mf-summary-label { color: var(--ink-3); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .mf-goal-eta { font-size: 12px; color: var(--ink-3); font-family: "JetBrains Mono", monospace; margin-top: 4px; }
+  .mf-goal-encourage { font-size: 13px; color: var(--mint-deep); font-weight: 600; margin-top: 6px; padding-top: 8px; border-top: 1px solid var(--line-2); }
+  .mf-today { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .mf-today-card { background: var(--card); border: 1px solid var(--line-2); border-radius: var(--r-md); padding: 16px; display: flex; flex-direction: column; gap: 8px; box-shadow: var(--shadow); }
+  .mf-today-card.is-warn { background: linear-gradient(135deg, #FFF3EC, #FFFAF6); border-color: #F5D5C2; }
+  .mf-today-eyebrow { color: var(--ink-3); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+  .mf-today-card.is-warn .mf-today-eyebrow { color: var(--warn); }
+  .mf-today-title { font-weight: 700; font-size: 16px; }
+  .mf-today-clients { display: flex; flex-direction: column; gap: 6px; }
+  .mf-today-client { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: var(--r-sm); background: var(--bg-2); cursor: pointer; transition: background .12s; }
+  .mf-today-client:hover { background: var(--mint-soft); }
+  .mf-today-card.is-warn .mf-today-client { background: rgba(255,255,255,0.6); }
+  .mf-today-client small { color: var(--ink-3); font-family: "JetBrains Mono", monospace; font-size: 11px; }
+  .mf-roster-quickadd { background: var(--mint-soft); border: 0; color: var(--mint-deep); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; opacity: 0; transition: opacity .12s; }
+  .mf-roster-item:hover .mf-roster-quickadd { opacity: 1; }
+  .mf-modal-bg { position: fixed; inset: 0; background: rgba(15,42,34,0.5); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 100; animation: mfFade .2s ease; }
+  @keyframes mfFade { from { opacity: 0; } to { opacity: 1; } }
+  .mf-modal { background: var(--card); border-radius: var(--r-lg); max-width: 720px; width: 100%; max-height: 85vh; overflow-y: auto; box-shadow: 0 24px 48px -12px rgba(0,0,0,0.3); display: flex; flex-direction: column; }
+  .mf-modal-head { padding: 20px 24px; border-bottom: 1px solid var(--line-2); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--card); border-radius: var(--r-lg) var(--r-lg) 0 0; }
+  .mf-modal-head h2 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+  .mf-modal-close { background: var(--bg-2); border: 0; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: var(--ink-2); }
+  .mf-modal-close:hover { background: var(--bg-3); color: var(--ink); }
+  .mf-modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .mf-gloss-item { padding: 16px; background: var(--bg); border-radius: var(--r-md); }
+  .mf-gloss-name { font-weight: 700; font-size: 15px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .mf-gloss-name .mf-mono { color: var(--mint-deep); font-size: 12px; background: var(--mint-soft); padding: 2px 8px; border-radius: 100px; font-weight: 600; }
+  .mf-gloss-what { color: var(--ink-2); font-size: 14px; line-height: 1.55; margin: 0 0 6px 0; }
+  .mf-gloss-range { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--ink-3); }
+  .mf-confirm { background: var(--mint-soft); border: 1px solid #C5E5D6; border-radius: var(--r-md); padding: 16px; margin-top: 12px; }
+  .mf-confirm-head { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--mint-deep); font-size: 14px; margin-bottom: 8px; }
+  .mf-confirm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; font-size: 12px; }
+  .mf-confirm-grid > div { display: flex; flex-direction: column; gap: 2px; }
+  .mf-confirm-grid small { color: var(--ink-3); font-size: 11px; }
+  .mf-confirm-grid strong { font-family: "JetBrains Mono", monospace; font-size: 14px; }
+  .mf-err { color: var(--warn); font-size: 13px; margin: 0; }
+  .mf-spinner-wrap { display: flex; justify-content: center; padding: 56px; }
+  .mf-spinner { width: 32px; height: 32px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--mint); animation: mf-spin 0.8s linear infinite; }
+  @keyframes mf-spin { to { transform: rotate(360deg); } }
+  @media (max-width: 540px) {
+    .mf-roster-list { position: static; max-height: none; }
+    .mf-roster-list ul { max-height: 280px; }
+    .mf-h1 { font-size: 24px; }
+    .mf-page-head { flex-direction: column; align-items: stretch; }
+    .mf-page-actions { width: 100%; }
+    .mf-page-actions button { flex: 1; justify-content: center; }
+    .mf-bignum { font-size: 40px; }
+    .mf-highlights { padding: 18px; }
+    .mf-content { padding: 12px !important; gap: 14px !important; }
+    .mf-stats { gap: 10px; }
+    .mf-stat { padding: 14px; }
+    .mf-stat-val { font-size: 26px; }
+    .mf-panel { padding: 16px; }
+    .mf-goal-card { flex-direction: column; align-items: stretch; }
+    .mf-goal-card .mf-ring { align-self: center; }
+    .mf-mobile-nav button { font-size: 9px; min-width: 48px; padding: 8px 4px; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<!-- Constants, API helpers, primitive components, Login -->
+<script type="text/babel">
+const { useState, useEffect } = React;
+const cx = (...a) => a.filter(Boolean).join(" ");
+
+const GLOSSARY = {
+  weightKg:     { what: "Your total body weight including everything — muscle, fat, water, bone. Most useful when compared with the other metrics, not on its own.", range: "Healthy adult range varies; we focus on YOUR trend." },
+  bodyFatPct:   { what: "The share of your weight that's fat tissue. Some fat is essential; we look at whether yours is in a healthy range AND moving the right way.", range: "Women 21–33% · Men 8–22% (varies by age)" },
+  muscleMassKg: { what: "How much skeletal muscle you carry. More muscle means a higher metabolism, better strength, easier ageing.", range: "Higher is generally better — track the trend." },
+  visceralFat:  { what: "Fat stored deep around your organs. Different from the fat under your skin — this one matters most for long-term health.", range: "1–9 is healthy · 10–14 keep an eye on it · 15+ talk to a doctor" },
+  waterPct:     { what: "How much of your body is water. Affects energy, recovery, and how accurate the other numbers are.", range: "Women 45–60% · Men 50–65%" },
+  metabolicAge: { what: "An estimate of how your body's burning energy compared to others your age. Lower than your real age = good news.", range: "Lower than your real age is the goal." },
+};
+
+const metrics = [
+  { key:"weightKg",    label:"Weight",       unit:"kg", goalKey:"weightKg",    direction:"down" },
+  { key:"bodyFatPct",  label:"Body fat",     unit:"%",  goalKey:"bodyFatPct",  direction:"down" },
+  { key:"muscleMassKg",label:"Muscle mass",  unit:"kg", goalKey:"muscleMassKg",direction:"up"   },
+  { key:"visceralFat", label:"Visceral fat", unit:"",                          direction:"down" },
+  { key:"waterPct",    label:"Water",        unit:"%",  goalKey:"waterPct",    direction:"up"   },
+  { key:"metabolicAge",label:"Metabolic age",unit:"yr",                        direction:"down" },
+];
+
+function fmtDate(iso, opts = {}) {
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-GB", { day:"numeric", month: opts.long ? "long" : "short", year: opts.year ? "numeric" : undefined });
+}
+
+function deltaStr(curr, prev, unit = "") {
+  const d = curr - prev;
+  const s = d > 0 ? "+" : d < 0 ? "−" : "";
+  return s + Math.abs(d).toFixed(1) + unit;
+}
+
+function ini(first, last) {
+  return ((first || "")[0] || "") + ((last || "")[0] || "");
+}
+
+function daysAgo(isoDate) {
+  if (!isoDate) return 9999;
+  return Math.round((Date.now() - new Date(isoDate).getTime()) / 86400000);
+}
+
+async function apiFetch(path, token, opts = {}) {
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = "Bearer " + token;
+  const res = await fetch(path, {
+    method: opts.method || "GET",
+    headers,
+    body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
+  });
+  if (!res.ok) {
+    let msg = res.statusText;
+    try { const j = await res.json(); msg = j.error || msg; } catch {}
+    throw new Error(msg);
+  }
+  return res.json();
+}
+
+function normScan(s) {
+  return {
+    id: String(s.id),
+    date: s.scan_date,
+    weightKg: Number(s.weight_kg),
+    bodyFatPct: Number(s.body_fat_pct),
+    muscleMassKg: Number(s.muscle_mass_kg),
+    visceralFat: Number(s.visceral_fat),
+    waterPct: Number(s.water_pct),
+    metabolicAge: Number(s.metabolic_age),
+    notes: s.notes || "",
+    coachId: String(s.coach_id),
+    coachFirst: s.coach_first,
+    coachLast: s.coach_last,
+  };
+}
+
+function normCoach(c) {
+  return {
+    id: String(c.id),
+    name: c.first_name + " " + c.last_name,
+    firstName: c.first_name,
+    avatar: ini(c.first_name, c.last_name),
+    role: c.specialty || "Coach",
+    isHead: Boolean(c.is_head),
+    since: c.since,
+    email: c.email,
+  };
+}
+
+function normalizeClientDash(data, authUser) {
+  const { client, scans, coaches, goals } = data;
+  const coachMap = {};
+  (coaches || []).forEach(c => { coachMap[String(c.id)] = normCoach(c); });
+  return {
+    client: {
+      id: String(client.id),
+      name: client.first_name + " " + client.last_name,
+      firstName: client.first_name,
+      avatar: ini(client.first_name, client.last_name),
+      heightCm: client.height_cm,
+      joined: client.joined_at,
+      email: client.email || authUser.email,
+      coaches: (coaches || []).map(c => String(c.id)),
+      goals: goals ? {
+        weightKg: Number(goals.weight_kg),
+        bodyFatPct: Number(goals.body_fat_pct),
+        muscleMassKg: Number(goals.muscle_mass_kg),
+        waterPct: Number(goals.water_pct),
+      } : {},
+    },
+    scans: (scans || []).map(normScan),
+    coaches: coachMap,
+    coachList: Object.values(coachMap),
+  };
+}
+
+function normalizeRoster(roster) {
+  return (roster || []).map(c => ({
+    id: String(c.id),
+    name: c.first_name + " " + c.last_name,
+    firstName: c.first_name,
+    avatar: ini(c.first_name, c.last_name),
+    lastScan: c.last_scan,
+    scanCount: Number(c.scan_count) || 0,
+    email: c.email,
+    joinedAt: c.joined_at,
+  }));
+}
+
+function normalizeClientDetail(data) {
+  const { client, scans, coaches, goals } = data;
+  const coachMap = {};
+  (coaches || []).forEach(c => { coachMap[String(c.id)] = normCoach(c); });
+  return {
+    client: {
+      id: String(client.id),
+      name: client.first_name + " " + client.last_name,
+      firstName: client.first_name,
+      avatar: ini(client.first_name, client.last_name),
+      heightCm: client.height_cm,
+      joined: client.joined_at,
+      email: client.email,
+      coaches: (coaches || []).map(c => String(c.id)),
+    },
+    scans: (scans || []).map(normScan),
+    coaches: coachMap,
+    coachList: Object.values(coachMap),
+    goals: goals ? {
+      weightKg: Number(goals.weight_kg),
+      bodyFatPct: Number(goals.body_fat_pct),
+      muscleMassKg: Number(goals.muscle_mass_kg),
+      waterPct: Number(goals.water_pct),
+    } : null,
+  };
+}
+
+function Spinner() {
+  return <div className="mf-spinner-wrap"><div className="mf-spinner" /></div>;
+}
+
+const Icon = ({ name, size = 18, stroke = 1.8 }) => {
+  const paths = {
+    home:     <><path d="M3 11l9-8 9 8"/><path d="M5 9.5V21h14V9.5"/></>,
+    trend:    <><path d="M3 17l5-5 4 4 7-8"/><path d="M14 8h5v5"/></>,
+    compare:  <><path d="M8 3v18"/><path d="M16 3v18"/><path d="M5 7l3-4 3 4"/><path d="M13 17l3 4 3-4"/></>,
+    target:   <><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></>,
+    users:    <><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="9" r="2.5"/><path d="M15 20c0-2.5 1.8-4.5 4-5"/></>,
+    plus:     <><path d="M12 5v14"/><path d="M5 12h14"/></>,
+    mail:     <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></>,
+    help:     <><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-1.5 2-2.5 3v1"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></>,
+    download: <><path d="M12 4v11"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/></>,
+    calendar: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M8 3v4"/><path d="M16 3v4"/></>,
+    message:  <><path d="M21 12a8 8 0 11-3.5-6.6L21 4l-1 4.5A8 8 0 0121 12z"/></>,
+    arrow:    <><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></>,
+    check:    <><path d="M5 12l5 5 9-11"/></>,
+    sparkle:  <><path d="M12 3v6"/><path d="M12 15v6"/><path d="M3 12h6"/><path d="M15 12h6"/><path d="M6.5 6.5l3 3"/><path d="M14.5 14.5l3 3"/><path d="M17.5 6.5l-3 3"/><path d="M9.5 14.5l-3 3"/></>,
+    chevron:  <><path d="M9 6l6 6-6 6"/></>,
+    search:   <><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-3.5-3.5"/></>,
+  };
+  return (
+    <svg className="mf-icon" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round">
+      {paths[name] || null}
+    </svg>
+  );
+};
+
+function Avatar({ initials, size = 36, accent }) {
+  return (
+    <div className="mf-avatar" style={{ width: size, height: size, fontSize: size * 0.4, background: accent || "#D8EFE4", color: "#1F4D3A" }}>
+      {initials}
+    </div>
+  );
+}
+
+function HelpDot({ children }) {
+  return (
+    <span className="mf-help-dot" tabIndex={0}>?
+      <span className="mf-tip">{children}</span>
+    </span>
+  );
+}
+
+function Ring({ value, max, size = 72, stroke = 8, color = "#3FA77F", track = "#E4F0EA" }) {
+  const pct = Math.max(0, Math.min(1, value / max));
+  const r = size / 2 - stroke;
+  const c = 2 * Math.PI * r;
+  return (
+    <div className="mf-ring" style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={track} strokeWidth={stroke} />
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={stroke}
+          strokeDasharray={`${pct*c} ${c}`} strokeLinecap="round"
+          transform={`rotate(-90 ${size/2} ${size/2})`} />
+      </svg>
+      <div className="mf-ring-center">
+        <span className="mf-mono">{Math.round(pct * 100)}<small>%</small></span>
+      </div>
+    </div>
+  );
+}
+
+function Spark({ values, w = 200, h = 48, stroke = "#3FA77F" }) {
+  if (!values || values.length < 2) return null;
+  const min = Math.min(...values), max = Math.max(...values);
+  const pad = 3, span = max - min || 1;
+  const pts = values.map((v, i) => [
+    pad + (i * (w - pad * 2)) / (values.length - 1),
+    h - pad - ((v - min) / span) * (h - pad * 2),
+  ]);
+  const d = pts.map((p, i) => (i === 0 ? "M" : "L") + p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+  return (
+    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`}>
+      <path d={d} stroke={stroke} strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      {pts.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r={i === pts.length - 1 ? 3 : 1.5} fill={stroke} />)}
+    </svg>
+  );
+}
+
+function BigLine({ values, dates, w = 760, h = 300, goal = null, unit = "" }) {
+  const pad = { t: 24, r: 24, b: 44, l: 56 };
+  const innerW = w - pad.l - pad.r, innerH = h - pad.t - pad.b;
+  const ymin = Math.min(...values, goal ?? Infinity) - 0.8;
+  const ymax = Math.max(...values, goal ?? -Infinity) + 0.8;
+  const span = ymax - ymin || 1;
+  const xs = values.map((_, i) => pad.l + (i * innerW) / (values.length - 1));
+  const ys = values.map(v => pad.t + innerH - ((v - ymin) / span) * innerH);
+  const d = xs.map((x, i) => (i === 0 ? "M" : "L") + x + "," + ys[i]).join(" ");
+  const dFill = d + ` L ${xs[xs.length-1]},${pad.t+innerH} L ${xs[0]},${pad.t+innerH} Z`;
+  const goalY = goal != null ? pad.t + innerH - ((goal - ymin) / span) * innerH : null;
+  return (
+    <svg width="100%" viewBox={`0 0 ${w} ${h}`}>
+      <defs>
+        <linearGradient id="mf-area" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stopColor="#3FA77F" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#3FA77F" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      {Array.from({ length: 5 }, (_, i) => {
+        const y = pad.t + (i * innerH) / 4;
+        const v = ymax - (i * span) / 4;
+        return <g key={i}>
+          <line x1={pad.l} x2={w-pad.r} y1={y} y2={y} stroke="#E4EEEA" />
+          <text x={pad.l-10} y={y+4} textAnchor="end" fontSize="11" fill="#7A9B8E" fontFamily="JetBrains Mono">{v.toFixed(1)}</text>
+        </g>;
+      })}
+      {goalY != null && <>
+        <line x1={pad.l} x2={w-pad.r} y1={goalY} y2={goalY} stroke="#E5944A" strokeDasharray="4 4" />
+        <text x={w-pad.r} y={goalY-6} textAnchor="end" fontSize="11" fill="#E5944A" fontFamily="JetBrains Mono">goal · {goal}{unit}</text>
+      </>}
+      <path d={dFill} fill="url(#mf-area)" />
+      <path d={d} stroke="#3FA77F" strokeWidth="2.4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      {xs.map((x, i) => <g key={i}>
+        <circle cx={x} cy={ys[i]} r="4.5" fill="#FBFCFA" stroke="#3FA77F" strokeWidth="2" />
+        <text x={x} y={h-14} textAnchor="middle" fontSize="11" fill="#7A9B8E" fontFamily="JetBrains Mono">{fmtDate(dates[i])}</text>
+      </g>)}
+    </svg>
+  );
+}
+
+function GlossaryModal({ onClose }) {
+  return (
+    <div className="mf-modal-bg" onClick={onClose}>
+      <div className="mf-modal" onClick={e => e.stopPropagation()}>
+        <div className="mf-modal-head">
+          <h2>What do these numbers actually mean?</h2>
+          <button className="mf-modal-close" onClick={onClose}>×</button>
+        </div>
+        <div className="mf-modal-body">
+          <p className="mf-sub" style={{ marginTop: 0 }}>Quick, no-jargon explanations of every metric we track.</p>
+          {metrics.map(m => (
+            <div key={m.key} className="mf-gloss-item">
+              <div className="mf-gloss-name">{m.label}<span className="mf-mono">{m.unit || "—"}</span></div>
+              <p className="mf-gloss-what">{GLOSSARY[m.key].what}</p>
+              <div className="mf-gloss-range">{GLOSSARY[m.key].range}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Login({ onLogin }) {
+  const [mode, setMode] = useState(null);
+  const [email, setEmail] = useState("");
+  const [pwd, setPwd] = useState("");
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  function pickDemo(type) {
+    setMode(type);
+    setEmail(type === "client" ? "emma@hey.com" : "marcus@studio.fit");
+    setPwd("demo123");
+    setErr("");
+  }
+
+  async function submit(e) {
+    e && e.preventDefault();
+    if (!email || !pwd) return;
+    setBusy(true); setErr("");
+    try {
+      const data = await apiFetch("/api/auth/login", null, { method: "POST", body: { email, password: pwd } });
+      onLogin(data.token, data.user);
+    } catch (ex) {
+      setErr("Incorrect email or password.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="mf-login">
+      <aside className="mf-login-aside">
+        <div className="mf-logo"><span className="mf-logo-mark" /><span>kelp</span></div>
+        <div className="mf-login-pitch">
+          <h1 className="mf-h1">Your body, in numbers you can actually read.</h1>
+          <p className="mf-lede">Every scan, every milestone, everything your coach left in the margins — all in one calm dashboard.</p>
+          <ul className="mf-pitch-list">
+            <li><span className="mf-tick">✓</span> Plain-language explanations for every metric</li>
+            <li><span className="mf-tick">✓</span> Compare any two scans side-by-side</li>
+            <li><span className="mf-tick">✓</span> Your coach's notes appear the moment they save</li>
+          </ul>
+        </div>
+        <div className="mf-login-stats">
+          <div><b className="mf-mono">2,840</b><small>scans logged this month</small></div>
+          <div><b className="mf-mono">96%</b><small>hit their first milestone</small></div>
+        </div>
+      </aside>
+      <main className="mf-login-main">
+        <div className="mf-login-card">
+          {!mode ? (<>
+            <h2 className="mf-h2">Welcome back</h2>
+            <p className="mf-sub">Tap your account to jump in with demo credentials.</p>
+            <div className="mf-persona-row">
+              <button className="mf-persona" onClick={() => pickDemo("client")}>
+                <Avatar initials="EL" size={48} />
+                <div><div className="mf-persona-name">Emma · I'm a client</div><div className="mf-persona-role">5 scans · 3 coaches on my team</div></div>
+                <span className="mf-kbd"><Icon name="arrow" size={14} /></span>
+              </button>
+              <button className="mf-persona" onClick={() => pickDemo("coach")}>
+                <Avatar initials="MB" size={48} accent="#F0E1D2" />
+                <div><div className="mf-persona-name">Marcus · I'm a coach</div><div className="mf-persona-role">Head coach · active clients</div></div>
+                <span className="mf-kbd"><Icon name="arrow" size={14} /></span>
+              </button>
+            </div>
+            <div className="mf-divider"><span>or sign in manually</span></div>
+            <label className="mf-field"><span>Email</span><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@studio.fit" /></label>
+            <label className="mf-field"><span>Password</span><input type="password" value={pwd} onChange={e => setPwd(e.target.value)} placeholder="••••••••" /></label>
+            {err && <p className="mf-err">{err}</p>}
+            <button className="mf-btn mf-btn-primary mf-full" onClick={submit} disabled={busy}>{busy ? "Signing in…" : "Sign in"}</button>
+          </>) : (
+            <form onSubmit={submit}>
+              <button type="button" className="mf-back" onClick={() => setMode(null)}>← Pick a different account</button>
+              <h2 className="mf-h2">{mode === "client" ? "Hey Emma 👋" : "Hey Marcus 👋"}</h2>
+              <p className="mf-sub">Demo credentials pre-filled — just continue.</p>
+              <label className="mf-field"><span>Email</span><input value={email} onChange={e => setEmail(e.target.value)} autoFocus /></label>
+              <label className="mf-field"><span>Password</span><input type="password" value={pwd} onChange={e => setPwd(e.target.value)} /></label>
+              {err && <p className="mf-err">{err}</p>}
+              <label className="mf-check"><input type="checkbox" defaultChecked /> Remember me on this device</label>
+              <button className="mf-btn mf-btn-primary mf-full" type="submit" disabled={busy}>{busy ? "Signing in…" : "Take me in →"}</button>
+            </form>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+</script>
+
+<!-- Shell + client views -->
+<script type="text/babel">
+function Shell({ user, sections, active, setActive, onLogout, onHelp, children }) {
+  const userIni = ini(user.firstName, user.lastName);
+  const name = user.firstName + " " + user.lastName;
+  const subtitle = user.role === "client" ? "Client" : "Coach";
+  return (
+    <div className="mf-shell">
+      <aside className="mf-side">
+        <div className="mf-side-logo">
+          <span className="mf-logo-mark" />
+          <span style={{ fontWeight: 800, fontSize: 20, letterSpacing: "-0.02em" }}>kelp</span>
+        </div>
+        <nav className="mf-side-nav">
+          {sections.map(s => (
+            <button key={s.id} className={cx("mf-side-link", active === s.id && "is-on")} onClick={() => setActive(s.id)}>
+              <span className="mf-side-icon"><Icon name={s.icon} /></span>
+              <span>{s.label}</span>
+              {s.badge != null && <span className="mf-side-badge">{s.badge}</span>}
+            </button>
+          ))}
+          <div style={{ flex: 1 }} />
+          <button className="mf-side-link" onClick={onHelp}>
+            <span className="mf-side-icon"><Icon name="help" /></span>
+            <span>What do these mean?</span>
+          </button>
+        </nav>
+        <div className="mf-side-user">
+          <Avatar initials={userIni} size={36} accent={user.role === "client" ? "#D8EFE4" : "#F0E1D2"} />
+          <div className="mf-side-user-meta">
+            <div className="mf-side-user-name">{name}</div>
+            <div className="mf-side-user-role">{subtitle}</div>
+          </div>
+          <button className="mf-icon-btn" onClick={onLogout} title="Sign out">⏻</button>
+        </div>
+      </aside>
+
+      <header className="mf-mobile-top">
+        <div className="mf-mobile-top-user">
+          <span className="mf-logo-mark" />
+          <div>
+            <div className="mf-mobile-top-name">{user.firstName}</div>
+            <div className="mf-mobile-top-role">{subtitle}</div>
+          </div>
+        </div>
+        <div className="mf-mobile-top-actions">
+          <button onClick={onHelp}><Icon name="help" size={16} /></button>
+          <button onClick={onLogout}>⏻</button>
+        </div>
+      </header>
+
+      <main className="mf-content">{children}</main>
+
+      <nav className="mf-mobile-nav">
+        {sections.map(s => (
+          <button key={s.id} className={cx(active === s.id && "is-on")} onClick={() => setActive(s.id)}>
+            <Icon name={s.icon} /><span>{s.label}</span>
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+}
+
+function PageHeader({ eyebrow, title, sub, actions }) {
+  return (
+    <header className="mf-page-head">
+      <div>
+        {eyebrow && <div className="mf-eyebrow">{eyebrow}</div>}
+        <h1 className="mf-h1">{title}</h1>
+        {sub && <p className="mf-sub">{sub}</p>}
+      </div>
+      {actions && <div className="mf-page-actions">{actions}</div>}
+    </header>
+  );
+}
+
+function StatCard({ metric: m, latest, prev, allScans }) {
+  const curr = latest[m.key], before = prev[m.key];
+  const positive = m.direction === "down" ? curr < before : curr > before;
+  let status = "—", statusClass = "";
+  if (curr === before) { status = "Held steady"; }
+  else { status = positive ? "Moving the right way" : "Worth a chat with your coach"; statusClass = positive ? "is-good" : "is-watch"; }
+  return (
+    <div className="mf-stat">
+      <div className="mf-stat-head">
+        <span className="mf-stat-label">{m.label}</span>
+        <HelpDot><strong>{m.label}</strong>{GLOSSARY[m.key].what}</HelpDot>
+      </div>
+      <div className="mf-stat-val mf-mono">{curr}<small>{m.unit}</small></div>
+      <div className={cx("mf-stat-delta", positive ? "is-good" : "is-warn")}>
+        {deltaStr(curr, before, m.unit)} <span>vs last</span>
+      </div>
+      <div className={cx("mf-stat-status", statusClass)}>{status}</div>
+      <Spark values={allScans.map(s => s[m.key])} />
+    </div>
+  );
+}
+
+function QuickAction({ icon, title, sub, onClick }) {
+  return (
+    <button className="mf-qa" onClick={onClick}>
+      <span className="mf-qa-icon"><Icon name={icon} /></span>
+      <div className="mf-qa-meta">
+        <div className="mf-qa-title">{title}</div>
+        <div className="mf-qa-sub">{sub}</div>
+      </div>
+    </button>
+  );
+}
+
+function HighlightsCard({ data }) {
+  const { scans, client } = data;
+  if (!scans.length) return null;
+  const latest = scans[scans.length - 1], start = scans[0];
+  const weightDelta = (start.weightKg - latest.weightKg).toFixed(1);
+  const muscleDelta = (latest.muscleMassKg - start.muscleMassKg).toFixed(1);
+  const ageDelta = start.metabolicAge - latest.metabolicAge;
+  const goalPct = client.goals && client.goals.weightKg
+    ? Math.round(Math.min(100, (Math.abs(latest.weightKg - start.weightKg) / Math.abs(client.goals.weightKg - start.weightKg)) * 100))
+    : 0;
+  return (
+    <section className="mf-highlights">
+      <div className="mf-highlights-head">
+        <h2>The story so far</h2>
+        <p>{scans.length} scans across {Math.round(daysAgo(start.date) / 30)} months of work, told in three numbers.</p>
+      </div>
+      <div className="mf-highlights-grid">
+        <div className="mf-highlight">
+          <div className="mf-highlight-emoji">🎯</div>
+          <div className="mf-highlight-num">{goalPct}<small>%</small></div>
+          <div className="mf-highlight-body">of your weight goal{client.goals && client.goals.weightKg ? ` — only ${Math.abs(latest.weightKg - client.goals.weightKg).toFixed(1)} kg to go` : ""}.</div>
+        </div>
+        <div className="mf-highlight">
+          <div className="mf-highlight-emoji">💪</div>
+          <div className="mf-highlight-num">+{muscleDelta}<small> kg</small></div>
+          <div className="mf-highlight-body">muscle gained since your first scan.</div>
+        </div>
+        <div className="mf-highlight">
+          <div className="mf-highlight-emoji">✨</div>
+          <div className="mf-highlight-num">−{ageDelta}<small> yrs</small></div>
+          <div className="mf-highlight-body">metabolic age — your body burns energy like it's younger.</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ClientApp({ auth, onLogout }) {
+  const [active, setActive] = useState("dashboard");
+  const [showHelp, setShowHelp] = useState(false);
+  const [data, setData] = useState(null);
+  const [err, setErr] = useState("");
+
+  useEffect(() => {
+    apiFetch("/api/client/dashboard", auth.token)
+      .then(d => setData(normalizeClientDash(d, auth.user)))
+      .catch(() => setErr("Could not load your data. Please refresh."));
+  }, [auth.token]);
+
+  if (err) return <div style={{ padding: 48, textAlign: "center" }}><p className="mf-err">{err}</p></div>;
+  if (!data) return <Spinner />;
+
+  const sections = [
+    { id: "dashboard", label: "Home",     icon: "home" },
+    { id: "progress",  label: "Progress", icon: "trend" },
+    { id: "compare",   label: "Compare",  icon: "compare" },
+    { id: "goals",     label: "Goals",    icon: "target" },
+  ];
+  return (
+    <Shell user={auth.user} sections={sections} active={active} setActive={setActive} onLogout={onLogout} onHelp={() => setShowHelp(true)}>
+      {active === "dashboard" && <ClientDashboard data={data} onGoto={setActive} />}
+      {active === "progress"  && <ClientProgress  data={data} />}
+      {active === "compare"   && <ClientCompare   data={data} />}
+      {active === "goals"     && <ClientGoals     data={data} />}
+      {showHelp && <GlossaryModal onClose={() => setShowHelp(false)} />}
+    </Shell>
+  );
+}
+
+function ClientDashboard({ data, onGoto }) {
+  const { scans, coaches, client } = data;
+  if (!scans.length) return <div className="mf-empty"><div className="mf-empty-emoji">📋</div><h2 className="mf-h2">No scans yet</h2><p className="mf-sub">Your coach will add your first scan during your next session.</p></div>;
+  const latest = scans[scans.length - 1], prev = scans[scans.length - 2] || latest;
+  const coachOfLatest = coaches[latest.coachId] || { name: latest.coachFirst + " " + latest.coachLast, avatar: ini(latest.coachFirst, latest.coachLast), isHead: false };
+  return (
+    <>
+      <PageHeader
+        eyebrow={"LAST SCAN · " + fmtDate(latest.date, { long: true, year: true }).toUpperCase()}
+        title={"Welcome back, " + client.firstName + "."}
+        sub={scans.length > 1 ? `Down ${(scans[0].weightKg - latest.weightKg).toFixed(1)} kg and ${(scans[0].bodyFatPct - latest.bodyFatPct).toFixed(1)}% body fat since your first scan.` : "Your first scan is in — let's build a baseline."}
+      />
+      <HighlightsCard data={data} />
+      <section>
+        <h2 className="mf-h3" style={{ marginBottom: 10 }}>Quick things</h2>
+        <div className="mf-quickactions">
+          <QuickAction icon="calendar" title="Book next scan" sub="Suggested · 4 weeks out" onClick={() => {}} />
+          <QuickAction icon="compare" title="Compare scans" sub="See what's changed" onClick={() => onGoto("compare")} />
+          <QuickAction icon="target" title="Check your goals" sub="See how close you are" onClick={() => onGoto("goals")} />
+          <QuickAction icon="trend" title="View progress" sub="Charts for every metric" onClick={() => onGoto("progress")} />
+        </div>
+      </section>
+      <section>
+        <div className="mf-panel-head" style={{ marginBottom: 10 }}>
+          <h2 className="mf-h3">Your latest numbers</h2>
+          <span className="mf-sub mf-mono">Hover <span className="mf-help-dot" style={{ position:"static", display:"inline-flex" }}>?</span> for what it means</span>
+        </div>
+        <div className="mf-stats">
+          {metrics.map(m => <StatCard key={m.key} metric={m} latest={latest} prev={prev} allScans={scans} />)}
+        </div>
+      </section>
+      <div className="mf-row">
+        <section className="mf-panel">
+          <h2 className="mf-h3">A note from your coach</h2>
+          {latest.notes ? (
+            <div className="mf-note">
+              <Avatar initials={coachOfLatest.avatar} size={40} accent="#F0E1D2" />
+              <div>
+                <div className="mf-note-head">
+                  <strong>{coachOfLatest.name}</strong>
+                  <span className="mf-mono mf-sub">{fmtDate(latest.date, { long: true })}</span>
+                </div>
+                <p className="mf-note-body">{latest.notes}</p>
+              </div>
+            </div>
+          ) : <p className="mf-sub">Your coach hasn't added a note for this scan yet.</p>}
+        </section>
+        <section className="mf-panel">
+          <h2 className="mf-h3">Your team</h2>
+          <ul className="mf-coachlist">
+            {client.coaches.map(id => {
+              const c = coaches[id];
+              if (!c) return null;
+              return (
+                <li key={id}>
+                  <Avatar initials={c.avatar} size={36} accent={c.isHead ? "#F0E1D2" : "#D8EFE4"} />
+                  <div className="mf-coach-meta">
+                    <div className="mf-coach-name">{c.name} {c.isHead && <span className="mf-tag">Head</span>}</div>
+                    <div className="mf-coach-role">{c.role}</div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      </div>
+      <section className="mf-panel">
+        <div className="mf-panel-head">
+          <h2 className="mf-h3">All your scans</h2>
+          <span className="mf-mono mf-sub">{scans.length} sessions</span>
+        </div>
+        <div className="mf-table-wrap">
+          <table className="mf-table">
+            <thead><tr><th>Date</th><th>Weight</th><th>Body fat</th><th>Muscle</th><th>Visceral</th><th>Water</th><th>Met. age</th><th>Logged by</th></tr></thead>
+            <tbody>
+              {[...scans].reverse().map(s => {
+                const c = coaches[s.coachId];
+                return (
+                  <tr key={s.id}>
+                    <td>{fmtDate(s.date, { long: true, year: true })}</td>
+                    <td className="mf-mono">{s.weightKg} kg</td>
+                    <td className="mf-mono">{s.bodyFatPct}%</td>
+                    <td className="mf-mono">{s.muscleMassKg} kg</td>
+                    <td className="mf-mono">{s.visceralFat}</td>
+                    <td className="mf-mono">{s.waterPct}%</td>
+                    <td className="mf-mono">{s.metabolicAge}</td>
+                    <td>{c ? c.firstName : (s.coachFirst || "—")}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function ClientProgress({ data }) {
+  const { scans, client } = data;
+  const [metric, setMetric] = useState("weightKg");
+  if (!scans.length) return <div className="mf-empty"><div className="mf-empty-emoji">📈</div><h2 className="mf-h2">No data yet</h2></div>;
+  const m = metrics.find(x => x.key === metric);
+  const series = scans.map(s => s[metric]);
+  const dates = scans.map(s => s.date);
+  const goal = m.goalKey && client.goals ? client.goals[m.goalKey] : null;
+  const total = series[series.length - 1] - series[0];
+  const weeks = Math.max(1, daysAgo(scans[0].date) / 7);
+  const monthly = (total / weeks) * 4;
+  const direction = total < 0 ? "down" : total > 0 ? "up" : "flat";
+  let insight;
+  if (direction === "flat") insight = "Holding steady. Sometimes that's the work — your body's settling in.";
+  else if ((m.direction === "down" && direction === "down") || (m.direction === "up" && direction === "up"))
+    insight = `Trending the right way — about ${Math.abs(monthly).toFixed(2)} ${m.unit || "units"} per month on average. Keep doing what you're doing.`;
+  else
+    insight = `Moving in the opposite direction — about ${Math.abs(monthly).toFixed(2)} ${m.unit || "units"} per month. Worth a chat with your coach.`;
+  return (
+    <>
+      <PageHeader title="Progress" sub="Tap a metric to see how it's trending." />
+      <div className="mf-insight">
+        <span className="mf-insight-icon"><Icon name="sparkle" size={16} /></span>
+        <div className="mf-insight-body">
+          <div className="mf-insight-title">What we're seeing</div>
+          <div className="mf-insight-text">{insight}</div>
+        </div>
+      </div>
+      <div className="mf-tabs">
+        {metrics.map(x => <button key={x.key} className={cx("mf-tab", metric === x.key && "is-on")} onClick={() => setMetric(x.key)}>{x.label}</button>)}
+      </div>
+      <section className="mf-panel">
+        <div className="mf-chart-head">
+          <div>
+            <div className="mf-eyebrow" style={{ display:"flex", alignItems:"center", gap:6 }}>
+              {m.label.toUpperCase()}
+              <HelpDot><strong>{m.label}</strong>{GLOSSARY[m.key].what}</HelpDot>
+            </div>
+            <div className="mf-bignum mf-mono">{series[series.length-1]}<small>{m.unit}</small></div>
+            <div className="mf-bigdelta">
+              <span className="is-good">{deltaStr(series[series.length-1], series[0], m.unit)}</span>
+              <span className="mf-sub"> since first scan · {fmtDate(dates[0], { long: true, year: true })}</span>
+            </div>
+          </div>
+          <div className="mf-chart-range"><button className="is-on">All</button></div>
+        </div>
+        {series.length >= 2 ? <BigLine values={series} dates={dates} goal={goal} unit={m.unit} /> : <p className="mf-sub">Need at least 2 scans to draw a chart.</p>}
+      </section>
+    </>
+  );
+}
+
+function ClientCompare({ data }) {
+  const { scans } = data;
+  const [a, setA] = useState(scans[0]?.id || "");
+  const [b, setB] = useState(scans[scans.length-1]?.id || "");
+  if (scans.length < 2) return <div className="mf-empty"><div className="mf-empty-emoji">⚖️</div><h2 className="mf-h2">Need 2+ scans</h2><p className="mf-sub">Compare becomes available after your second scan.</p></div>;
+  const sA = scans.find(s => s.id === a) || scans[0];
+  const sB = scans.find(s => s.id === b) || scans[scans.length-1];
+  const presets = [
+    { id: "fl", label: "First ↔ latest",  a: scans[0].id, b: scans[scans.length-1].id },
+    { id: "lt", label: "Last two scans",   a: scans[scans.length-2].id, b: scans[scans.length-1].id },
+  ];
+  if (scans.length > 2) presets.push({ id: "fm", label: "Start ↔ midpoint", a: scans[0].id, b: scans[Math.floor(scans.length/2)].id });
+  const currentPreset = presets.find(p => p.a === a && p.b === b)?.id;
+  const wC = sB.weightKg - sA.weightKg, fC = sB.bodyFatPct - sA.bodyFatPct, mC = sB.muscleMassKg - sA.muscleMassKg;
+  return (
+    <>
+      <PageHeader title="Compare scans" sub="Pick two sessions to see exactly what shifted." />
+      <div className="mf-compare-presets">
+        <span className="mf-sub" style={{ marginRight:4 }}>Quick picks:</span>
+        {presets.map(p => <button key={p.id} className={cx("mf-preset", currentPreset === p.id && "is-on")} onClick={() => { setA(p.a); setB(p.b); }}>{p.label}</button>)}
+      </div>
+      <div className="mf-compare-pickers">
+        <label className="mf-field"><span>Baseline</span>
+          <select value={a} onChange={e => setA(e.target.value)}>
+            {scans.map(s => <option key={s.id} value={s.id}>{fmtDate(s.date, { long: true, year: true })}</option>)}
+          </select>
+        </label>
+        <span className="mf-vs">VS</span>
+        <label className="mf-field"><span>Comparison</span>
+          <select value={b} onChange={e => setB(e.target.value)}>
+            {scans.map(s => <option key={s.id} value={s.id}>{fmtDate(s.date, { long: true, year: true })}</option>)}
+          </select>
+        </label>
+      </div>
+      <div className="mf-compare-summary">
+        <div className="mf-summary-item"><span className={cx("mf-summary-num", wC < 0 ? "is-good" : wC > 0 ? "is-warn" : "")}>{wC > 0 ? "+" : ""}{wC.toFixed(1)} kg</span><span className="mf-summary-label">Weight change</span></div>
+        <div className="mf-summary-item"><span className={cx("mf-summary-num", fC < 0 ? "is-good" : "is-warn")}>{fC > 0 ? "+" : ""}{fC.toFixed(1)}%</span><span className="mf-summary-label">Body fat change</span></div>
+        <div className="mf-summary-item"><span className={cx("mf-summary-num", mC > 0 ? "is-good" : "is-warn")}>{mC > 0 ? "+" : ""}{mC.toFixed(1)} kg</span><span className="mf-summary-label">Muscle change</span></div>
+      </div>
+      <section className="mf-panel mf-no-padding">
+        <div className="mf-table-wrap" style={{ margin:0, padding:0 }}>
+          <table className="mf-table mf-compare-table">
+            <thead><tr><th>Metric</th><th>{fmtDate(sA.date, { long: true })}</th><th>{fmtDate(sB.date, { long: true })}</th><th>Change</th><th>How it's going</th></tr></thead>
+            <tbody>
+              {metrics.map(m => {
+                const va = sA[m.key], vb = sB[m.key];
+                const positive = m.direction === "down" ? vb < va : vb > va;
+                const flat = va === vb;
+                return (
+                  <tr key={m.key}>
+                    <td>{m.label}</td>
+                    <td className="mf-mono">{va}{m.unit}</td>
+                    <td className="mf-mono">{vb}{m.unit}</td>
+                    <td className={cx("mf-mono", flat ? "" : positive ? "is-good" : "is-warn")}>{deltaStr(vb, va, m.unit)}</td>
+                    <td className={cx(flat ? "" : positive ? "is-good" : "is-warn")} style={{ fontWeight:600 }}>{flat ? "Held steady" : positive ? "Moving right way" : "Worth a chat"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function ClientGoals({ data }) {
+  const { scans, client } = data;
+  if (!scans.length || !client.goals) return <div className="mf-empty"><div className="mf-empty-emoji">🎯</div><h2 className="mf-h2">No goals set yet</h2><p className="mf-sub">Ask your coach to set your targets.</p></div>;
+  const latest = scans[scans.length-1], start = scans[0];
+  const weeks = Math.max(1, daysAgo(start.date) / 7);
+  return (
+    <>
+      <PageHeader title="Your goals" sub={"Set with your coach on " + fmtDate(client.joined, { long: true, year: true }) + ". You're closer than you think."} />
+      <div className="mf-goal-grid">
+        {metrics.filter(m => m.goalKey && client.goals[m.goalKey] != null).map(m => {
+          const curr = latest[m.key], target = client.goals[m.goalKey], startV = start[m.key];
+          const totalRange = Math.abs(target - startV) || 1;
+          const traveled = Math.abs(curr - startV);
+          const pct = Math.min(100, Math.max(0, (traveled / totalRange) * 100));
+          const monthlyPace = traveled / (weeks / 4);
+          const remainingDist = Math.abs(target - curr);
+          const monthsToGo = monthlyPace > 0 ? remainingDist / monthlyPace : null;
+          let encourage;
+          if (pct >= 100)     encourage = "🎉 You did it! Time to set the next one.";
+          else if (pct >= 75) encourage = "Almost there — the last stretch is mostly mental.";
+          else if (pct >= 50) encourage = "Past the halfway mark. Keep going.";
+          else if (pct >= 25) encourage = "Off to a steady start. Trust the process.";
+          else                encourage = "Early days. Tiny wins compound — promise.";
+          return (
+            <div key={m.key} className="mf-panel mf-goal-card">
+              <Ring value={pct} max={100} size={96} stroke={9} />
+              <div className="mf-goal-meta">
+                <div className="mf-goal-label">{m.label}</div>
+                <div className="mf-goal-row"><span>Start</span><span className="mf-mono">{startV}{m.unit}</span></div>
+                <div className="mf-goal-row"><span>Now</span><span className="mf-mono">{curr}{m.unit}</span></div>
+                <div className="mf-goal-row"><span>Goal</span><span className="mf-mono">{target}{m.unit}</span></div>
+                <div className="mf-goal-bar"><div className="mf-goal-bar-fill" style={{ width: pct + "%" }} /></div>
+                {monthsToGo && pct < 100 && <div className="mf-goal-eta">At your current pace · ~{Math.ceil(monthsToGo)} months to go</div>}
+                <div className="mf-goal-encourage">{encourage}</div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+</script>
+
+<!-- Coach views + App root -->
+<script type="text/babel">
+function CoachApp({ auth, onLogout }) {
+  const [active, setActive] = useState("today");
+  const [selectedClientId, setSelectedClientId] = useState(null);
+  const [roster, setRoster] = useState(null);
+  const [toast, setToast] = useState("");
+  const [showHelp, setShowHelp] = useState(false);
+
+  useEffect(() => {
+    apiFetch("/api/coach/roster", auth.token)
+      .then(r => {
+        const norm = normalizeRoster(r);
+        setRoster(norm);
+        if (norm.length) setSelectedClientId(norm[0].id);
+      })
+      .catch(() => setRoster([]));
+  }, [auth.token]);
+
+  function pingToast(msg) { setToast(msg); setTimeout(() => setToast(""), 2800); }
+
+  const sections = [
+    { id: "today",    label: "Today",    icon: "home" },
+    { id: "roster",   label: "Clients",  icon: "users", badge: roster ? roster.length : null },
+    { id: "add",      label: "New scan", icon: "plus" },
+    { id: "messages", label: "Messages", icon: "mail" },
+  ];
+
+  if (!roster) return <Spinner />;
+
+  return (
+    <Shell user={auth.user} sections={sections} active={active} setActive={setActive} onLogout={onLogout} onHelp={() => setShowHelp(true)}>
+      {active === "today"    && <CoachToday roster={roster} user={auth.user} onOpenClient={id => { setSelectedClientId(id); setActive("roster"); }} onGoto={setActive} />}
+      {active === "roster"   && <CoachRoster roster={roster} selectedClientId={selectedClientId} onSelect={setSelectedClientId} auth={auth} onToast={pingToast} onGoto={setActive} />}
+      {active === "add"      && <CoachNewScan roster={roster} auth={auth} onSaved={name => { pingToast("✓ Saved · " + name + " can see it now."); setActive("today"); }} />}
+      {active === "messages" && <CoachMessages auth={auth} />}
+      {showHelp && <GlossaryModal onClose={() => setShowHelp(false)} />}
+      {toast && <div className="mf-toast">{toast}</div>}
+    </Shell>
+  );
+}
+
+function CoachToday({ roster, user, onOpenClient, onGoto }) {
+  const now = new Date();
+  const hour = now.getHours();
+  const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+  const dayStr = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).toUpperCase();
+  const overdue = roster.filter(c => daysAgo(c.lastScan) > 28);
+  const recent  = roster.filter(c => daysAgo(c.lastScan) <= 7);
+
+  return (
+    <>
+      <PageHeader
+        eyebrow={dayStr}
+        title={greeting + ", " + user.firstName + "."}
+        sub={roster.length + " active client" + (roster.length === 1 ? "" : "s") + (overdue.length ? " · " + overdue.length + " overdue for a scan" : " · all up to date") + "."}
+        actions={<>
+          <button className="mf-btn mf-btn-ghost" onClick={() => onGoto("messages")}><Icon name="mail" size={14} /> Messages</button>
+          <button className="mf-btn mf-btn-primary" onClick={() => onGoto("add")}><Icon name="plus" size={14} /> Log a scan</button>
+        </>}
+      />
+      <div className="mf-today">
+        {overdue.length > 0 && (
+          <div className="mf-today-card is-warn">
+            <div className="mf-today-eyebrow">⚠ Needs a nudge</div>
+            <div className="mf-today-title">{overdue.length} client{overdue.length === 1 ? "" : "s"} overdue</div>
+            <div className="mf-today-clients">
+              {overdue.map(c => (
+                <div key={c.id} className="mf-today-client" onClick={() => onOpenClient(c.id)}>
+                  <Avatar initials={c.avatar} size={28} accent="#F5DAD0" />
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontWeight:600, fontSize:13 }}>{c.name}</div>
+                    <small>{daysAgo(c.lastScan)} days since last scan</small>
+                  </div>
+                  <Icon name="chevron" size={14} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <div className="mf-today-card">
+          <div className="mf-today-eyebrow">✨ Recently scanned</div>
+          <div className="mf-today-title">Worth a note</div>
+          <div className="mf-today-clients">
+            {recent.length ? recent.map(c => (
+              <div key={c.id} className="mf-today-client" onClick={() => onOpenClient(c.id)}>
+                <Avatar initials={c.avatar} size={28} />
+                <div style={{ flex:1 }}>
+                  <div style={{ fontWeight:600, fontSize:13 }}>{c.name}</div>
+                  <small>scanned {daysAgo(c.lastScan) === 0 ? "today" : daysAgo(c.lastScan) + "d ago"} · {c.scanCount} total scans</small>
+                </div>
+                <Icon name="chevron" size={14} />
+              </div>
+            )) : <p className="mf-sub" style={{ margin: "8px 0 0" }}>No recent scans this week.</p>}
+          </div>
+        </div>
+        <div className="mf-today-card">
+          <div className="mf-today-eyebrow">📋 All clients</div>
+          <div className="mf-today-title">{roster.length} on your roster</div>
+          <div className="mf-today-clients">
+            {roster.slice(0, 4).map(c => (
+              <div key={c.id} className="mf-today-client" onClick={() => onOpenClient(c.id)}>
+                <Avatar initials={c.avatar} size={28} />
+                <div style={{ flex:1 }}>
+                  <div style={{ fontWeight:600, fontSize:13 }}>{c.name}</div>
+                  <small>{c.scanCount} scans · joined {fmtDate(c.joinedAt)}</small>
+                </div>
+                <Icon name="chevron" size={14} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function CoachRoster({ roster, selectedClientId, onSelect, auth, onToast, onGoto }) {
+  const [query, setQuery] = useState("");
+  const filtered = roster.filter(c => c.name.toLowerCase().includes(query.toLowerCase()));
+  return (
+    <div className="mf-roster">
+      <aside className="mf-roster-list">
+        <div className="mf-roster-head">
+          <div style={{ position:"relative" }}>
+            <input className="mf-search" placeholder="Search clients…" value={query} onChange={e => setQuery(e.target.value)} />
+            <span style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", color:"var(--ink-3)", display:"flex" }}><Icon name="search" size={14} /></span>
+          </div>
+        </div>
+        <ul>
+          {filtered.map(c => {
+            const days = daysAgo(c.lastScan);
+            const overdue = days > 28;
+            return (
+              <li key={c.id} className={cx("mf-roster-item", selectedClientId === c.id && "is-on")} onClick={() => onSelect(c.id)}>
+                <Avatar initials={c.avatar} size={40} accent={overdue ? "#F5DAD0" : "#D8EFE4"} />
+                <div className="mf-roster-meta">
+                  <div className="mf-roster-name">{c.name}</div>
+                  <div className="mf-roster-sub mf-mono">{days}d · {c.scanCount} scans</div>
+                </div>
+                {overdue && <span className="mf-tag mf-tag-warn">!</span>}
+                <button className="mf-roster-quickadd" onClick={e => { e.stopPropagation(); onGoto("add"); }}>+ Scan</button>
+              </li>
+            );
+          })}
+        </ul>
+      </aside>
+      <section className="mf-roster-detail">
+        {selectedClientId
+          ? <ClientDetailPane clientId={selectedClientId} auth={auth} onToast={onToast} />
+          : <div className="mf-empty"><div className="mf-empty-emoji">👈</div><p className="mf-sub">Select a client to view their profile.</p></div>
+        }
+      </section>
+    </div>
+  );
+}
+
+function ClientDetailPane({ clientId, auth, onToast }) {
+  const [data, setData] = useState(null);
+  const [err, setErr] = useState("");
+  const [draft, setDraft] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setData(null); setErr(""); setDraft("");
+    apiFetch("/api/coach/clients/" + clientId, auth.token)
+      .then(d => setData(normalizeClientDetail(d)))
+      .catch(e => setErr(e.message || "Could not load client data."));
+  }, [clientId, auth.token]);
+
+  async function shareNote() {
+    if (!draft.trim()) return;
+    setSaving(true);
+    try {
+      await apiFetch("/api/coach/notes", auth.token, { method: "POST", body: { clientId: Number(clientId), note: draft } });
+      onToast("✓ Note shared. Client will see it on their home screen.");
+      setDraft("");
+      const updated = await apiFetch("/api/coach/clients/" + clientId, auth.token);
+      setData(normalizeClientDetail(updated));
+    } catch (e) {
+      onToast("Error: " + (e.message || "Could not save note."));
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (err) return <div className="mf-empty"><div className="mf-empty-emoji">⚠️</div><p className="mf-err">{err}</p></div>;
+  if (!data) return <Spinner />;
+
+  const { client, scans, coaches } = data;
+  if (!scans.length) return (
+    <div className="mf-empty">
+      <div className="mf-empty-emoji">📋</div>
+      <h2 className="mf-h2">{client.name}</h2>
+      <p className="mf-sub">No scans recorded yet. Use "New scan" to add the first one.</p>
+    </div>
+  );
+
+  const latest = scans[scans.length - 1], prev = scans[scans.length - 2] || latest;
+  const coachOfLatest = coaches[latest.coachId] || { name: latest.coachFirst + " " + latest.coachLast, avatar: ini(latest.coachFirst, latest.coachLast), isHead: false };
+
+  return (
+    <>
+      <PageHeader
+        eyebrow={"CLIENT · joined " + fmtDate(client.joined, { long: true, year: true })}
+        title={client.name}
+        sub={scans.length + " scan" + (scans.length === 1 ? "" : "s") + " · last on " + fmtDate(latest.date, { long: true }) + (scans.length > 1 ? ". Down " + (scans[0].weightKg - latest.weightKg).toFixed(1) + " kg and " + (scans[0].bodyFatPct - latest.bodyFatPct).toFixed(1) + "% body fat since intake." : ".")}
+        actions={<button className="mf-btn mf-btn-primary" onClick={() => {}}><Icon name="plus" size={14} /> Add scan</button>}
+      />
+      <div className="mf-stats">
+        {metrics.map(m => <StatCard key={m.key} metric={m} latest={latest} prev={prev} allScans={scans} />)}
+      </div>
+      <div className="mf-row">
+        <section className="mf-panel">
+          <h2 className="mf-h3">Add a note for {client.firstName}</h2>
+          <p className="mf-sub">They'll see this on their home screen. Updates the latest scan's notes.</p>
+          <textarea className="mf-textarea" rows="3" placeholder="What did you notice? What's next?" value={draft} onChange={e => setDraft(e.target.value)} />
+          <div className="mf-panel-foot">
+            <span className="mf-sub mf-mono">{draft.length} chars</span>
+            <button className="mf-btn mf-btn-primary" disabled={!draft.trim() || saving} onClick={shareNote}>{saving ? "Saving…" : "Share with " + client.firstName}</button>
+          </div>
+        </section>
+        <section className="mf-panel">
+          <h2 className="mf-h3">Coaching team</h2>
+          <ul className="mf-coachlist">
+            {client.coaches.map(id => {
+              const c = coaches[id];
+              if (!c) return null;
+              return (
+                <li key={id}>
+                  <Avatar initials={c.avatar} size={36} accent={c.isHead ? "#F0E1D2" : "#D8EFE4"} />
+                  <div className="mf-coach-meta">
+                    <div className="mf-coach-name">{c.name} {c.isHead && <span className="mf-tag">Head</span>}</div>
+                    <div className="mf-coach-role">{c.role}</div>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      </div>
+      <section className="mf-panel">
+        <div className="mf-panel-head">
+          <h2 className="mf-h3">Scan history</h2>
+          <span className="mf-mono mf-sub">{scans.length} sessions</span>
+        </div>
+        <div className="mf-table-wrap">
+          <table className="mf-table">
+            <thead><tr><th>Date</th><th>Weight</th><th>Body fat</th><th>Muscle</th><th>Visceral</th><th>Water</th><th>Met. age</th><th>By</th><th>Note</th></tr></thead>
+            <tbody>
+              {[...scans].reverse().map(s => {
+                const c = coaches[s.coachId];
+                return (
+                  <tr key={s.id}>
+                    <td>{fmtDate(s.date, { long: true, year: true })}</td>
+                    <td className="mf-mono">{s.weightKg}</td>
+                    <td className="mf-mono">{s.bodyFatPct}%</td>
+                    <td className="mf-mono">{s.muscleMassKg}</td>
+                    <td className="mf-mono">{s.visceralFat}</td>
+                    <td className="mf-mono">{s.waterPct}%</td>
+                    <td className="mf-mono">{s.metabolicAge}</td>
+                    <td>{c ? c.firstName : (s.coachFirst || "—")}</td>
+                    <td style={{ maxWidth:200, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis", color:"var(--ink-3)", fontSize:12 }}>{s.notes || "—"}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </section>
+      {latest.notes && (
+        <section className="mf-panel">
+          <h2 className="mf-h3">Latest note</h2>
+          <div className="mf-note">
+            <Avatar initials={coachOfLatest.avatar} size={40} accent="#F0E1D2" />
+            <div>
+              <div className="mf-note-head"><strong>{coachOfLatest.name}</strong><span className="mf-mono mf-sub">{fmtDate(latest.date, { long: true })}</span></div>
+              <p className="mf-note-body">{latest.notes}</p>
+            </div>
+          </div>
+        </section>
+      )}
+    </>
+  );
+}
+
+function CoachNewScan({ roster, auth, onSaved }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const [clientId, setClientId] = useState(roster[0]?.id || "");
+  const [date, setDate] = useState(today);
+  const [vals, setVals] = useState({ weightKg:"", bodyFatPct:"", muscleMassKg:"", visceralFat:"", waterPct:"", metabolicAge:"" });
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const filled = metrics.every(m => vals[m.key] !== "");
+  const remaining = metrics.filter(m => vals[m.key] === "").length;
+  const clientName = roster.find(c => c.id === clientId)?.firstName || "client";
+
+  async function save() {
+    if (!filled || !clientId) return;
+    setBusy(true); setErr("");
+    try {
+      await apiFetch("/api/coach/scans", auth.token, {
+        method: "POST",
+        body: {
+          clientId: Number(clientId), scanDate: date,
+          weightKg: Number(vals.weightKg), bodyFatPct: Number(vals.bodyFatPct),
+          muscleMassKg: Number(vals.muscleMassKg), visceralFat: Number(vals.visceralFat),
+          waterPct: Number(vals.waterPct), metabolicAge: Number(vals.metabolicAge),
+          notes: note || null,
+        },
+      });
+      onSaved(clientName);
+    } catch (e) {
+      setErr(e.message || "Could not save scan.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <>
+      <PageHeader title="Log a new scan" sub={"60 seconds. The moment you save, " + clientName + "'s home screen updates."} />
+      <section className="mf-panel">
+        <h2 className="mf-h3">Who & when</h2>
+        <div className="mf-form-row">
+          <label className="mf-field"><span>Client</span>
+            <select value={clientId} onChange={e => setClientId(e.target.value)}>
+              {roster.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </label>
+          <label className="mf-field"><span>Scan date</span><input type="date" value={date} onChange={e => setDate(e.target.value)} /></label>
+        </div>
+      </section>
+      <section className="mf-panel">
+        <h2 className="mf-h3">Measurements <small className="mf-sub">{filled ? "all set ✓" : remaining + " to go"}</small></h2>
+        <div className="mf-metrics-grid">
+          {metrics.map(m => (
+            <label key={m.key} className="mf-field">
+              <span style={{ display:"flex", alignItems:"center", gap:6 }}>
+                {m.label} <small className="mf-mono">{m.unit && "(" + m.unit + ")"}</small>
+                <HelpDot><strong>{m.label}</strong>{GLOSSARY[m.key].what}</HelpDot>
+              </span>
+              <input inputMode="decimal" placeholder="—" value={vals[m.key]} onChange={e => setVals({ ...vals, [m.key]: e.target.value })} />
+            </label>
+          ))}
+        </div>
+      </section>
+      <section className="mf-panel">
+        <h2 className="mf-h3">A note for {clientName} <small className="mf-sub">(optional)</small></h2>
+        <textarea className="mf-textarea" rows="4" placeholder="What did you notice? What's the plan for next block?" value={note} onChange={e => setNote(e.target.value)} />
+        {filled && (
+          <div className="mf-confirm">
+            <div className="mf-confirm-head"><Icon name="check" size={16} /> Ready to save</div>
+            <div className="mf-confirm-grid">
+              {metrics.map(m => <div key={m.key}><small>{m.label}</small><strong>{vals[m.key]}{m.unit}</strong></div>)}
+            </div>
+          </div>
+        )}
+        {err && <p className="mf-err">{err}</p>}
+        <div className="mf-panel-foot">
+          <span className="mf-sub mf-mono">{filled ? "✓ All measurements captured" : remaining + " field" + (remaining === 1 ? "" : "s") + " remaining"}</span>
+          <button className="mf-btn mf-btn-primary" disabled={!filled || busy} onClick={save}>{busy ? "Saving…" : "Save scan →"}</button>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function CoachMessages({ auth }) {
+  const [msgs, setMsgs] = useState(null);
+  useEffect(() => {
+    apiFetch("/api/coach/messages", auth.token).then(setMsgs).catch(() => setMsgs([]));
+  }, [auth.token]);
+
+  function relTime(iso) {
+    const d = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+    if (d < 60) return d + "m ago";
+    if (d < 1440) return Math.round(d/60) + "h ago";
+    return Math.round(d/1440) + "d ago";
+  }
+
+  return (
+    <>
+      <PageHeader title="Messages" sub="Conversations with your clients and team." />
+      <section className="mf-panel">
+        {!msgs ? <Spinner /> : msgs.length === 0 ? (
+          <p className="mf-sub">No messages yet.</p>
+        ) : (
+          <ul className="mf-msgs">
+            {msgs.map(m => (
+              <li key={m.id}>
+                <Avatar initials={ini(m.sender_first, m.sender_last)} size={40} accent={m.sender_role === "coach" ? "#F0E1D2" : "#D8EFE4"} />
+                <div>
+                  <div className="mf-msg-head">
+                    <strong>{m.sender_first} {m.sender_last}</strong>
+                    <span className="mf-sub mf-mono">{relTime(m.created_at)}</span>
+                  </div>
+                  <p className="mf-msg-body">{m.body}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </>
+  );
+}
+
+function App() {
+  const [auth, setAuth] = useState(null);
+  const [booting, setBooting] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("kelpToken");
+    const user  = JSON.parse(localStorage.getItem("kelpUser") || "null");
+    if (token && user) setAuth({ token, user });
+    setBooting(false);
+  }, []);
+
+  function handleLogin(token, user) {
+    localStorage.setItem("kelpToken", token);
+    localStorage.setItem("kelpUser", JSON.stringify(user));
+    setAuth({ token, user });
+  }
+
+  function handleLogout() {
+    localStorage.removeItem("kelpToken");
+    localStorage.removeItem("kelpUser");
+    setAuth(null);
+  }
+
+  if (booting) return <Spinner />;
+  if (!auth) return <Login onLogin={handleLogin} />;
+  if (auth.user.role === "client") return <ClientApp auth={auth} onLogout={handleLogout} />;
+  return <CoachApp auth={auth} onLogout={handleLogout} />;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js"));
+}
+</script>
+</body>
+</html>

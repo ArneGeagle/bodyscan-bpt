@@ -50,6 +50,9 @@ router.post('/register', async (req, res) => {
   if (!['client', 'coach'].includes(role)) {
     return res.status(400).json({ error: 'Role must be client or coach' });
   }
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters' });
+  }
   try {
     const hash = await bcrypt.hash(password, 12);
     const [result] = await db.query(

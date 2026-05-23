@@ -626,86 +626,109 @@ function GlossaryModal({ onClose }) {
   );
 }
 
+const linkStyle = { background:"none", border:0, color:"var(--mint-deep)", cursor:"pointer", fontWeight:600, fontSize:14, padding:0, textDecoration:"underline" };
+
 function Login({ onLogin }) {
-  const [mode, setMode] = useState(null);
+  const [view, setView] = useState("login");
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [role, setRole] = useState("client");
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
 
-  function pickDemo(type) {
-    setMode(type);
-    setEmail(type === "client" ? "emma@hey.com" : "marcus@studio.fit");
-    setPwd("demo123");
-    setErr("");
-  }
+  function switchView(v) { setView(v); setErr(""); }
 
-  async function submit(e) {
+  async function login(e) {
     e && e.preventDefault();
-    if (!email || !pwd) return;
+    if (!email || !pwd) { setErr("Vul e-mail en wachtwoord in."); return; }
     setBusy(true); setErr("");
     try {
       const data = await apiFetch("/api/auth/login", null, { method: "POST", body: { email, password: pwd } });
       onLogin(data.token, data.user);
-    } catch (ex) {
-      setErr("Incorrect email or password.");
-    } finally {
-      setBusy(false);
-    }
+    } catch {
+      setErr("Onjuist e-mailadres of wachtwoord.");
+    } finally { setBusy(false); }
   }
+
+  async function register(e) {
+    e && e.preventDefault();
+    if (!firstName || !lastName || !email || !pwd) { setErr("Vul alle velden in."); return; }
+    if (pwd.length < 8) { setErr("Wachtwoord moet minimaal 8 tekens bevatten."); return; }
+    setBusy(true); setErr("");
+    try {
+      await apiFetch("/api/auth/register", null, { method: "POST", body: { email, password: pwd, firstName, lastName, role } });
+      const data = await apiFetch("/api/auth/login", null, { method: "POST", body: { email, password: pwd } });
+      onLogin(data.token, data.user);
+    } catch (ex) {
+      setErr(ex.message === "Email already in use" ? "Dit e-mailadres is al in gebruik." : (ex.message || "Account aanmaken mislukt."));
+    } finally { setBusy(false); }
+  }
+
+  const aside = (
+    <aside className="mf-login-aside">
+      <div className="mf-logo"><span className="mf-logo-mark" /><span>kelp</span></div>
+      <div className="mf-login-pitch">
+        <h1 className="mf-h1">Je lichaam, in cijfers die je echt begrijpt.</h1>
+        <p className="mf-lede">Elke scan, elke mijlpaal, alles wat je coach noteerde — in één overzichtelijk dashboard. Zonder jargon.</p>
+        <ul className="mf-pitch-list">
+          <li><span className="mf-tick">✓</span> Duidelijke uitleg bij elke meting</li>
+          <li><span className="mf-tick">✓</span> Vergelijk twee scans naast elkaar</li>
+          <li><span className="mf-tick">✓</span> Notities van je coach verschijnen direct</li>
+        </ul>
+      </div>
+    </aside>
+  );
+
+  if (view === "register") return (
+    <div className="mf-login">
+      {aside}
+      <main className="mf-login-main">
+        <div className="mf-login-card">
+          <button type="button" className="mf-back" onClick={() => switchView("login")}>← Terug naar inloggen</button>
+          <h2 className="mf-h2">Account aanmaken</h2>
+          <p className="mf-sub">Gratis. Je coach koppelt je na registratie.</p>
+          <form onSubmit={register} style={{ display:"contents" }}>
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+              <label className="mf-field"><span>Voornaam</span><input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Emma" autoFocus /></label>
+              <label className="mf-field"><span>Achternaam</span><input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Larsen" /></label>
+            </div>
+            <label className="mf-field"><span>E-mailadres</span><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="jij@voorbeeld.nl" /></label>
+            <label className="mf-field"><span>Wachtwoord <small style={{ color:"var(--ink-3)", fontWeight:400 }}>min. 8 tekens</small></span><input type="password" value={pwd} onChange={e => setPwd(e.target.value)} placeholder="••••••••" /></label>
+            <label className="mf-field"><span>Ik ben een…</span>
+              <select value={role} onChange={e => setRole(e.target.value)}>
+                <option value="client">Cliënt — ik wil mijn voortgang bijhouden</option>
+                <option value="coach">Coach — ik begeleid cliënten</option>
+              </select>
+            </label>
+            {err && <p className="mf-err">{err}</p>}
+            <button className="mf-btn mf-btn-primary mf-full" type="submit" disabled={busy}>{busy ? "Account aanmaken…" : "Account aanmaken →"}</button>
+          </form>
+          <p className="mf-sub" style={{ textAlign:"center", marginTop:4 }}>
+            Al een account? <button style={linkStyle} onClick={() => switchView("login")}>Inloggen</button>
+          </p>
+        </div>
+      </main>
+    </div>
+  );
 
   return (
     <div className="mf-login">
-      <aside className="mf-login-aside">
-        <div className="mf-logo"><span className="mf-logo-mark" /><span>kelp</span></div>
-        <div className="mf-login-pitch">
-          <h1 className="mf-h1">Your body, in numbers you can actually read.</h1>
-          <p className="mf-lede">Every scan, every milestone, everything your coach left in the margins — all in one calm dashboard.</p>
-          <ul className="mf-pitch-list">
-            <li><span className="mf-tick">✓</span> Plain-language explanations for every metric</li>
-            <li><span className="mf-tick">✓</span> Compare any two scans side-by-side</li>
-            <li><span className="mf-tick">✓</span> Your coach's notes appear the moment they save</li>
-          </ul>
-        </div>
-        <div className="mf-login-stats">
-          <div><b className="mf-mono">2,840</b><small>scans logged this month</small></div>
-          <div><b className="mf-mono">96%</b><small>hit their first milestone</small></div>
-        </div>
-      </aside>
+      {aside}
       <main className="mf-login-main">
         <div className="mf-login-card">
-          {!mode ? (<>
-            <h2 className="mf-h2">Welcome back</h2>
-            <p className="mf-sub">Tap your account to jump in with demo credentials.</p>
-            <div className="mf-persona-row">
-              <button className="mf-persona" onClick={() => pickDemo("client")}>
-                <Avatar initials="EL" size={48} />
-                <div><div className="mf-persona-name">Emma · I'm a client</div><div className="mf-persona-role">5 scans · 3 coaches on my team</div></div>
-                <span className="mf-kbd"><Icon name="arrow" size={14} /></span>
-              </button>
-              <button className="mf-persona" onClick={() => pickDemo("coach")}>
-                <Avatar initials="MB" size={48} accent="#F0E1D2" />
-                <div><div className="mf-persona-name">Marcus · I'm a coach</div><div className="mf-persona-role">Head coach · active clients</div></div>
-                <span className="mf-kbd"><Icon name="arrow" size={14} /></span>
-              </button>
-            </div>
-            <div className="mf-divider"><span>or sign in manually</span></div>
-            <label className="mf-field"><span>Email</span><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@studio.fit" /></label>
-            <label className="mf-field"><span>Password</span><input type="password" value={pwd} onChange={e => setPwd(e.target.value)} placeholder="••••••••" /></label>
+          <h2 className="mf-h2">Welkom terug</h2>
+          <p className="mf-sub">Log in op je account.</p>
+          <form onSubmit={login} style={{ display:"contents" }}>
+            <label className="mf-field"><span>E-mailadres</span><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="jij@voorbeeld.nl" autoFocus /></label>
+            <label className="mf-field"><span>Wachtwoord</span><input type="password" value={pwd} onChange={e => setPwd(e.target.value)} placeholder="••••••••" /></label>
             {err && <p className="mf-err">{err}</p>}
-            <button className="mf-btn mf-btn-primary mf-full" onClick={submit} disabled={busy}>{busy ? "Signing in…" : "Sign in"}</button>
-          </>) : (
-            <form onSubmit={submit}>
-              <button type="button" className="mf-back" onClick={() => setMode(null)}>← Pick a different account</button>
-              <h2 className="mf-h2">{mode === "client" ? "Hey Emma 👋" : "Hey Marcus 👋"}</h2>
-              <p className="mf-sub">Demo credentials pre-filled — just continue.</p>
-              <label className="mf-field"><span>Email</span><input value={email} onChange={e => setEmail(e.target.value)} autoFocus /></label>
-              <label className="mf-field"><span>Password</span><input type="password" value={pwd} onChange={e => setPwd(e.target.value)} /></label>
-              {err && <p className="mf-err">{err}</p>}
-              <label className="mf-check"><input type="checkbox" defaultChecked /> Remember me on this device</label>
-              <button className="mf-btn mf-btn-primary mf-full" type="submit" disabled={busy}>{busy ? "Signing in…" : "Take me in →"}</button>
-            </form>
-          )}
+            <button className="mf-btn mf-btn-primary mf-full" type="submit" disabled={busy}>{busy ? "Inloggen…" : "Inloggen"}</button>
+          </form>
+          <p className="mf-sub" style={{ textAlign:"center", marginTop:4 }}>
+            Nog geen account? <button style={linkStyle} onClick={() => switchView("register")}>Aanmaken →</button>
+          </p>
         </div>
       </main>
     </div>
